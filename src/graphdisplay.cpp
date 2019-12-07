@@ -22,10 +22,59 @@ using namespace std;
 //enum files_e{ new1, new2, N };
 //const char* name[] = {  "new1", "new2" };
 
-constexpr int Size{6};
-constexpr int MaxEdges{3};
+constexpr int Size{6}; //max number of vectors
+constexpr int MaxEdges{3}; //max number of edges per vector
 
-Graph<int,Size, MaxEdges> dfs(){
+
+//makeGraph makes a dot file from a graph object and opens it. 
+//Takes a graph object as an argument.
+void makeGraph(Graph<int,Size, MaxEdges> g){
+    const char* names[Size]; //array of vector names
+    const std::array<vertex<int, MaxEdges>, Size> verticies = g.getVertices();    
+    int maxEdges = 0; //total edges from all vectors
+    for (int i = 0; i < Size; i++){ //get verctor names and number of total edges
+        names[i] = verticies[i].name.c_str();
+        maxEdges += verticies[i].currentEdges;
+    }
+    typedef std::pair<int,int> vertexEdge; 
+    vertexEdge usedBy[maxEdges];// array of edges to be made in dot file
+    int usedByLocation = 0; //location in the used_by array while adding values
+    for(int i = 0; i < Size; i++){
+        for(int j = 0; j < verticies[i].currentEdges; j++){
+            Edge newEdge = verticies[i].Edges[j]; //get the edge arrays for vector
+            int edgeNumber = -1;
+            for(int t = 0; t < Size; t++){
+                if(names[t]==newEdge.v->name){ //find vertex number for name
+                    edgeNumber = t;
+                    t = Size;
+                }
+                
+            } 
+            usedBy[usedByLocation] = vertexEdge(i, edgeNumber); //add edge to edge dot array
+            usedByLocation++;
+        }
+        int connectingVertex = -1;
+        
+    }
+
+    const int nedges = sizeof(usedBy)/sizeof(vertexEdge);
+    int weights[nedges];
+    std::fill(weights, weights + nedges, 1);
+
+    typedef boost::adjacency_list< boost::vecS, boost::vecS, boost::directedS, 
+        boost::property< boost::vertex_color_t, boost::default_color_type >,
+        boost::property< boost::edge_weight_t, int >
+        > BoostGraph; //define type of 
+    BoostGraph gr(usedBy, usedBy + nedges, weights, Size); //make BoostGraph object
+
+    ofstream myfile;
+    myfile.open ("graph.gv"); //write graph to gv file
+    boost::write_graphviz(myfile, gr, boost::make_label_writer(names));
+    myfile.close();
+    system("xdot graph.gv"); //open graph
+}
+
+void dfs(){
     Graph<int, Size, MaxEdges> g;
 
 	g.addVertex("Boulder");
@@ -43,66 +92,14 @@ Graph<int,Size, MaxEdges> dfs(){
 	g.addEdge("Moab", "Fruita", 6);
 	g.addEdge("Las Vegas", "Moab", 4);
 
-    return g;
-}
 
-void makeGraph(){
-    Graph g = dfs();
-    const char* names[Size];
-    const std::array<vertex<int, MaxEdges>, Size> verticies = g.getVertices();    
-    int maxEdges = 0;
-    for (int i = 0; i < Size; i++){
-        names[i] = verticies[i].name.c_str();
-        maxEdges += verticies[i].currentEdges;
-    }
-
-    typedef std::pair<int,int> vertexEdge;
-    vertexEdge used_by[maxEdges];
-    int VELocation = 0;
-    for(int i = 0; i < Size; i++){
-        for(int j = 0; j < verticies[i].currentEdges; j++){
-            Edge newEdge = verticies[i].Edges[j];
-            int edgeNumber = -1;
-            for(int t = 0; t < Size; t++){
-                if(names[t]==newEdge.v->name){
-                    edgeNumber = t;
-                    t = Size;
-                }
-                
-            } 
-            used_by[VELocation] = vertexEdge(i, edgeNumber);
-            VELocation++;
-        }
-        //newEdgeName = verticies[i].Edges;
-        int connectingVertex = -1;
-        
-        //used_by[i] = Edge(i, connectingVertex);
-    }
-    //Edge used_by[] = {
-    //    Edge(Boulder,Denver),
-    //};
-    const int nedges = sizeof(used_by)/sizeof(vertexEdge);
-    int weights[nedges];
-    std::fill(weights, weights + nedges, 1);
-
-    //using namespace boost;
-
-    typedef boost::adjacency_list< boost::vecS, boost::vecS, boost::directedS, 
-        boost::property< boost::vertex_color_t, boost::default_color_type >,
-        boost::property< boost::edge_weight_t, int >
-        > BoostGraph;
-    BoostGraph gr(used_by, used_by + nedges, weights, Size);
-
-    ofstream myfile;
-    myfile.open ("graph.gv");
-    boost::write_graphviz(myfile, gr, boost::make_label_writer(names));
-    myfile.close();
-    system("xdot graph.gv");
+    makeGraph(g);
+    return;
 }
 
 int main(int,char*[])
 {
-  makeGraph();
+  dfs();
   return 0;
   
 }
