@@ -22,84 +22,98 @@ using namespace std;
 //enum files_e{ new1, new2, N };
 //const char* name[] = {  "new1", "new2" };
 
-constexpr int Size{6}; //max number of vectors
-constexpr int MaxEdges{3}; //max number of edges per vector
+//max number of vectors
+constexpr int Size{6};
+//max number of edges per vector     
+constexpr int MaxEdges{3}; 
 
-
-//makeGraph makes a dot file from a graph object and opens it. 
+//makeGraph makes a dot file from a graph object and opens it.
 //Takes a graph object as an argument.
-void makeGraph(Graph<int,Size, MaxEdges> g){
-    const char* names[Size]; //array of vector names
-    const std::array<vertex<int, MaxEdges>, Size> verticies = g.getVertices();    
-    int maxEdges = 0; //total edges from all vectors
-    for (int i = 0; i < Size; i++){ //get verctor names and number of total edges
+void makeGraph(Graph<int, Size, MaxEdges> g)
+{
+    //array of vector names
+    const char *names[Size]; 
+    const std::array<vertex<int, MaxEdges>, Size> verticies = g.getVertices();
+    // maxEdges is the total edges from all vectors
+    int maxEdges = 0;
+    // get verctor names and number of total edges
+    for (int i = 0; i < Size; i++)
+    {
         names[i] = verticies[i].name.c_str();
         maxEdges += verticies[i].currentEdges;
     }
-    typedef std::pair<int,int> vertexEdge; 
-    vertexEdge usedBy[maxEdges];// array of edges to be made in dot file
-    int usedByLocation = 0; //location in the used_by array while adding values
-    for(int i = 0; i < Size; i++){
-        for(int j = 0; j < verticies[i].currentEdges; j++){
-            Edge newEdge = verticies[i].Edges[j]; //get the edge arrays for vector
+    typedef std::pair<int, int> vertexEdge;
+    // array of edges to be made in dot file
+    vertexEdge usedBy[maxEdges]; 
+    //location in the used_by array while adding values
+    int usedByLocation = 0;      
+    for (int i = 0; i < Size; i++)
+    {
+        for (int j = 0; j < verticies[i].currentEdges; j++)
+        {
+            //get the edge arrays for vector
+            Edge newEdge = verticies[i].Edges[j]; 
             int edgeNumber = -1;
-            for(int t = 0; t < Size; t++){
-                if(names[t]==newEdge.v->name){ //find vertex number for name
+            for (int t = 0; t < Size; t++)
+            {
+                if (names[t] == newEdge.v->name)
+                { //find vertex number for name
                     edgeNumber = t;
                     t = Size;
                 }
-                
-            } 
-            usedBy[usedByLocation] = vertexEdge(i, edgeNumber); //add edge to edge dot array
+            }
+            //add edge to edge dot array
+            usedBy[usedByLocation] = vertexEdge(i, edgeNumber); 
             usedByLocation++;
         }
         int connectingVertex = -1;
-        
     }
 
-    const int nedges = sizeof(usedBy)/sizeof(vertexEdge);
+    const int nedges = sizeof(usedBy) / sizeof(vertexEdge);
     int weights[nedges];
     std::fill(weights, weights + nedges, 1);
-
-    typedef boost::adjacency_list< boost::vecS, boost::vecS, boost::directedS, 
-        boost::property< boost::vertex_color_t, boost::default_color_type >,
-        boost::property< boost::edge_weight_t, int >
-        > BoostGraph; //define type of 
-    BoostGraph gr(usedBy, usedBy + nedges, weights, Size); //make BoostGraph object
+    //define type of
+    typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::directedS,
+                                  boost::property<boost::vertex_color_t, boost::default_color_type>,
+                                  boost::property<boost::edge_weight_t, int>>
+        BoostGraph;
+    //make BoostGraph object                                        
+    BoostGraph gr(usedBy, usedBy + nedges, weights, Size); 
 
     ofstream myfile;
-    myfile.open ("graph.gv"); //write graph to gv file
+    //write graph to gv file
+    myfile.open("graph.gv"); 
     boost::write_graphviz(myfile, gr, boost::make_label_writer(names));
     myfile.close();
-    system("xdot graph.gv"); //open graph
+    //open graph
+    system("xdot graph.gv"); 
 }
 
-void dfs(){
+void dfs()
+{
     Graph<int, Size, MaxEdges> g;
 
-	g.addVertex("Boulder");
-	g.addVertex("Denver");
-	g.addVertex("Cheyenne");
-	g.addVertex("Fruita");
-	g.addVertex("Moab");
-	g.addVertex("Las Vegas");
+    g.addVertex("Boulder");
+    g.addVertex("Denver");
+    g.addVertex("Cheyenne");
+    g.addVertex("Fruita");
+    g.addVertex("Moab");
+    g.addVertex("Las Vegas");
 
-	g.addEdge("Boulder", "Denver", 5);
-	g.addEdge("Boulder", "Cheyenne", 4);
-	g.addEdge("Boulder", "Fruita", 6);
-	g.addEdge("Fruita", "Denver", 2);
-	g.addEdge("Cheyenne", "Moab", 9);
-	g.addEdge("Moab", "Fruita", 6);
-	g.addEdge("Las Vegas", "Moab", 4);
-
+    g.addEdge("Boulder", "Denver", 5);
+    g.addEdge("Boulder", "Cheyenne", 4);
+    g.addEdge("Boulder", "Fruita", 6);
+    g.addEdge("Fruita", "Denver", 2);
+    g.addEdge("Cheyenne", "Moab", 9);
+    g.addEdge("Moab", "Fruita", 6);
+    g.addEdge("Las Vegas", "Moab", 4);
 
     makeGraph(g);
     return;
 }
 
-int main(int,char*[])
+int main(int, char *[])
 {
-  dfs();
-  return 0;
-  
+    dfs();
+    return 0;
 }
