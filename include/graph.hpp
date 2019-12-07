@@ -50,12 +50,9 @@ public:
     void printDFT();
     void printBFT();
     void setAllVerticesUnvisited();
-<<<<<<< HEAD
     const std::array<vertex<T, MaxEdges>, Size>& getVertices();
-=======
     void adjListToMat(bool matrix[Size][Size]);
     void adjListToMat();
->>>>>>> caccd11bd6ba3047b05fc32afa634a5c5b262f90
 
 private:
     std::array<vertex<T, MaxEdges>, Size> vertices; //stores vertices
