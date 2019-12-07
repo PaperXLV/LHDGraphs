@@ -26,7 +26,7 @@ int main()
 
 	g.displayEdges();
 
-	g.printBFT();
+	g.printDFT();
 
 	return 0;
 }
