@@ -1,9 +1,8 @@
 #include <iostream>
 #include <vector>
-#include "Graph.h"
+#include "Graph.hpp"
 
 using namespace std;
-
 
 int main()
 {
@@ -17,17 +16,17 @@ int main()
 	g.addVertex("Moab");
 	g.addVertex("Las Vegas");
 
-	g.addEdge("Boulder", "Denver");
-	g.addEdge("Boulder", "Cheyenne");
-	g.addEdge("Boulder", "Fruita");
-	g.addEdge("Fruita", "Denver");
-	g.addEdge("Cheyenne", "Moab");
-	g.addEdge("Moab", "Fruita");
-	g.addEdge("Las Vegas", "Moab"); 
+	g.addEdge("Boulder", "Denver", 5);
+	g.addEdge("Boulder", "Cheyenne", 4);
+	g.addEdge("Boulder", "Fruita", 6);
+	g.addEdge("Fruita", "Denver", 2);
+	g.addEdge("Cheyenne", "Moab", 9);
+	g.addEdge("Moab", "Fruita", 6);
+	g.addEdge("Las Vegas", "Moab", 4);
 
 	//g.displayEdges();
 
-	g.breadthFirstTraverse("Fruita");
+	g.printBFT();
 
-    return 0;
+	return 0;
 }

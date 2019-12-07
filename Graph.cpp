@@ -1,108 +1,150 @@
-#include "Graph.h"
+#include <iostream>
 #include <vector>
 #include <queue>
-#include <iostream>
-
 using namespace std;
 
+#include "Graph.hpp"
 
-void Graph::addEdge(string v1, string v2){
+Graph::Graph()
+{
+}
 
-	for(int i = 0; i < vertices.size(); i++){
-		if(vertices[i].name == v1){
-			for(int j = 0; j < vertices.size(); j++){
-				if(vertices[j].name == v2 && i!=j){
-					adjVertex av;
-					av.v = &vertices[j];
-					vertices[i].adj.push_back(av);
-					//add another vertexx in other direction
-					adjVertex av2;
-					av2.v = &vertices[i];
-					vertices[j].adj.push_back(av2);
+Graph::~Graph()
+{
+}
+
+void Graph::addVertex(string cityName)
+{
+	vertex v1;
+	v1.name = cityName;
+	vertices.push_back(v1);
+}
+
+void Graph::addEdge(string city1, string city2, int distance)
+{
+	for (int i = 0; i < vertices.size(); i++)
+	{
+		if (vertices[i].name == city1)
+		{
+			for (int j = 0; j < vertices.size(); j++)
+			{
+				if (vertices[j].name == city2 && j != i)
+				{
+					Edge e0;
+					e0.v = &vertices[j];
+					e0.distance = distance;
+					vertices[i].Edges.push_back(e0);
 				}
 			}
 		}
 	}
-
 }
 
-void Graph::addVertex(string n){
-	bool found = false;
+void Graph::displayEdges()
+{
+	for (int i = 0; i < vertices.size(); i++)
+	{
+		cout << vertices[i].name << "-->";
+		for (int j = 0; j < vertices[i].Edges.size(); j++)
+		{
+			if (j < vertices[i].Edges.size() - 1)
+			{
+				cout << vertices[i].Edges[j].v->name << " (" << vertices[i].Edges[j].distance << " miles)***";
+			}
+			else
+			{
+				cout << vertices[i].Edges[j].v->name << " (" << vertices[i].Edges[j].distance << " miles)";
+			}
+		}
+		cout << endl;
+	}
+}
 
-	for(int i = 0; i < vertices.size(); i++){
-		if(vertices[i].name == n){
-			found = true;
-			cout << vertices[i].name << " already exists" << endl;
+void Graph::setAllVerticesUnvisited()
+{
+	for (int i = 0; i < vertices.size(); i++)
+	{
+		vertices[i].visited = false;
+	}
+}
 
+void Graph::printDFT()
+{
+	setAllVerticesUnvisited();
+	for (int i = 0; i < vertices.size(); i++)
+	{
+		if (!vertices[i].visited)
+			DFT_traversal(&vertices[i]);
+	}
+}
+
+void Graph::printBFT()
+{
+	setAllVerticesUnvisited();
+	for (int i = 0; i < vertices.size(); i++)
+	{
+		if (!vertices[i].visited)
+			BFT_traversal(&vertices[i]);
+	}
+}
+
+vertex *Graph::findVertex(string name)
+{
+	vertex *found;
+	for (int i = 0; i < vertices.size(); i++)
+	{
+		if (vertices[i].name == name)
+		{
+			found = &vertices[i];
+			break;
 		}
 	}
 
-	if(!found){
-		vertex v;
-		v.name = n;
-		v.distance = 0;
-		vertices.push_back(v);
-	}
-	
+	return found;
 }
 
-void Graph::displayEdges(){
-    //loop through all vertices and adjacent vertices
-    for(int i = 0; i < vertices.size(); i++){
-        cout<<vertices[i].name<<" --> ";
-        for(int j = 0; j < vertices[i].adj.size(); j++){
-            cout << vertices[i].adj[j].v->name << " ";
-        }
-        cout<<endl;
-    }
-
-}
-
-void Graph::breadthFirstTraverse(string sourceVertex){
-	// since we dont have a search function, implement 
-	// heare to find starting vertex
-
-	//need a pointer to kepp track of starting vertex
-	vertex *vStart;
-
-	for(int i = 0; i < vertices.size(); i++){
-		if(vertices[i].name == sourceVertex){
-			vStart = &vertices[i];
+void DFT_recursive(vertex *v)
+{
+	v->visited = true;
+	for (int i = 0; i < v->Edges.size(); i++)
+	{
+		if (!v->Edges[i].v->visited)
+		{
+			cout << v->Edges[i].v->name << endl;
+			DFT_recursive(v->Edges[i].v);
 		}
 	}
-
-	cout << "starting vertex (root): " << vStart->name << "-> ";
-
-	vStart->visited = true;
-
-	//use the STL queue to keep track of vertices to be visited
-
- 	queue<vertex*> q;
-
- 	//enqueue the starting vertex
- 	q.push(vStart);
-
- 	//need another vertex pointer 
- 	vertex *n;
-
-
- 	while(!q.empty()){
- 		// q dequeue 
- 		n = q.front(); // like a peek
- 		q.pop();
-
- 		for(int x = 0; x < n->adj.size(); x++){
- 			//check if vertex has been visisted 
- 			if(!n->adj[x].v->visited){
- 				n->adj[x].v->distance = n->distance+1;
- 				n->adj[x].v->visited = true;
- 				q.push(n->adj[x].v);
- 				cout << n->adj[x].v->name << "(" << n->adj[x].v->distance << ") "; 
- 			}
- 		}
- 	} 
-
- 	cout << endl;
-
 }
 
+void Graph::BFT_traversal(vertex *v)
+{
+	cout << v->name << endl;
+	v->visited = true;
+
+	queue<vertex *> q;
+	q.push(v);
+
+	vertex *n;
+
+	while (!q.empty())
+	{
+		n = q.front();
+		q.pop();
+
+		for (int i = 0; i < n->Edges.size(); i++)
+		{
+			if (!n->Edges[i].v->visited)
+			{
+				n->Edges[i].v->visited = true;
+				q.push(n->Edges[i].v);
+				cout << n->Edges[i].v->name << endl;
+			}
+		}
+	}
+}
+
+void Graph::DFT_traversal(vertex *v)
+{
+	cout << v->name << endl;
+	DFT_recursive(v);
+}
