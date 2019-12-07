@@ -230,7 +230,7 @@ template <typename T, size_t MaxEdges>
 void DFT_recursive(vertex<T, MaxEdges> *v)
 {
     v->visited = true;
-    for (int i = 0; i < v->Edges.size(); i++)
+    for (int i = 0; i < v->currentEdges; i++)
     {
         if (!v->Edges[i].v->visited)
         {
