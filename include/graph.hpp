@@ -15,11 +15,8 @@ vertex in the graph. */
 template <typename T, size_t MaxEdges>
 struct Edge
 {
-    constexpr Edge()
-    {
-        distance = 0;
-        v = nullptr;
-    };
+    constexpr Edge() : v{nullptr},
+                       distance{0} {};
     vertex<T, MaxEdges> *v;
     T distance;
 };
@@ -28,13 +25,10 @@ struct Edge
 template <typename T, size_t MaxEdges>
 struct vertex
 {
-    constexpr vertex()
-    {
-        name = "";
-        visited = false;
-        currentEdges = 0;
-        Edges = {};
-    };
+    constexpr vertex() : Edges{},
+                         visited{false},
+                         name{},
+                         currentEdges{0} {};
 
     std::string_view name;
     bool visited;
@@ -47,6 +41,7 @@ class Graph
 {
 public:
     constexpr Graph();
+    ~Graph() = default;
 
     constexpr void addVertex(std::string_view name);
     constexpr void addEdge(std::string_view name1, std::string_view name2, T distance);
@@ -54,6 +49,7 @@ public:
     void displayEdges();
     void printDFT();
     void printBFT();
+    constexpr std::array<vertex<T, MaxEdges>, Size> &getVertices();
     constexpr void setAllVerticesUnvisited();
     void adjListToMat(bool matrix[Size][Size]);
     void adjListToMat();
@@ -62,7 +58,7 @@ private:
     std::array<vertex<T, MaxEdges>, Size> vertices; //stores vertices
     int currentVertices{0};
 
-    bool adjMatrix[Size][Size];
+    std::array<std::array<bool, Size>, Size> adjMatrix;
 
     constexpr vertex<T, MaxEdges> *findVertex(std::string_view name);
     void BFT_traversal(vertex<T, MaxEdges> *v);
@@ -70,7 +66,7 @@ private:
 };
 
 template <typename T, size_t Size, size_t MaxEdges>
-constexpr Graph<T, Size, MaxEdges>::Graph()
+constexpr Graph<T, Size, MaxEdges>::Graph() : adjMatrix{}
 {
     for (int i = 0; i < Size; i++)
     {
@@ -164,6 +160,12 @@ constexpr bool Graph<T, Size, MaxEdges>::inEdges(std::string_view city, std::str
     }
 
     return false;
+}
+
+template <typename T, size_t Size, size_t MaxEdges>
+constexpr std::array<vertex<T, MaxEdges>, Size> &Graph<T, Size, MaxEdges>::getVertices()
+{
+    return vertices;
 }
 
 template <typename T, size_t Size, size_t MaxEdges>

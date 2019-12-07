@@ -4,10 +4,10 @@
 
 using namespace std;
 
-int main()
+template <typename T, size_t Size, size_t MaxEdges>
+constexpr string_view compute()
 {
-
-	Graph<int, 6, 3> g;
+	Graph<T, Size, MaxEdges> g{};
 
 	g.addVertex("Boulder");
 	g.addVertex("Denver");
@@ -24,9 +24,13 @@ int main()
 	g.addEdge("Moab", "Fruita", 6);
 	g.addEdge("Las Vegas", "Moab", 4);
 
-	g.addEdge("Denver", "Boulder", 5);
+	return g.getVertices()[0].name;
+}
 
-	g.printDFT();
+int main()
+{
 
-	return 0;
+	constexpr string_view comp = compute<int, 6, 3>();
+	std::cout << comp << std::endl;
+	return 1;
 }
