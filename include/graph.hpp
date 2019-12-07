@@ -11,11 +11,11 @@ struct vertex;
 
 /*This is the struct for the adjacent vertices for each
 vertex in the graph. */
-
 template <typename T, size_t MaxEdges>
 struct Edge
 {
     vertex<T, MaxEdges> *v;
+    // distance of the single edge
     T distance;
 };
 
@@ -27,7 +27,9 @@ struct vertex
     {
         name = "";
         visited = false;
+        solved = false;
         currentEdges = 0;
+        distDijk = 0;
         Edges = {};
     };
 
@@ -35,8 +37,16 @@ struct vertex
     bool visited;
     int currentEdges;
     std::array<Edge<T, MaxEdges>, MaxEdges> Edges; //stores edges to adjacent vertices
+
+    // distDijk for weighted distance from starting vertex
+    T distDijk;
+    // solved member for Dijkstra's
+    bool solved;
 };
 
+/* 
+    Main Graph instance
+*/
 template <typename T, size_t Size, size_t MaxEdges>
 class Graph
 {
@@ -52,6 +62,7 @@ public:
     void setAllVerticesUnvisited();
     void adjListToMat(bool matrix[Size][Size]);
     void adjListToMat();
+    vertex<T, MaxEdges> *dijkstraSearch(std::string start, std::string end);
 
 private:
     std::array<vertex<T, MaxEdges>, Size> vertices; //stores vertices
@@ -62,6 +73,9 @@ private:
     void DFT_traversal(vertex<T, MaxEdges> *v);
 };
 
+/*
+    Graph constructor. Initializes its adjMatrix to zeros
+*/
 template <typename T, size_t Size, size_t MaxEdges>
 constexpr Graph<T, Size, MaxEdges>::Graph()
 {
@@ -74,6 +88,10 @@ constexpr Graph<T, Size, MaxEdges>::Graph()
     }
 }
 
+/*
+    Add a vertex to the graph
+        - Takes in the name (string) of the city to be added
+*/
 template <typename T, size_t Size, size_t MaxEdges>
 void Graph<T, Size, MaxEdges>::addVertex(std::string cityName)
 {
@@ -84,6 +102,12 @@ void Graph<T, Size, MaxEdges>::addVertex(std::string cityName)
     current += 1;
 }
 
+/*
+    Add an edge between two verticies
+        - city 2 will be added to city1's adjacency list
+        - will only add in a single direction
+        - distance is the weight of the Edge between the verticies
+*/
 template <typename T, size_t Size, size_t MaxEdges>
 void Graph<T, Size, MaxEdges>::addEdge(std::string city1, std::string city2, T distance)
 {
@@ -106,10 +130,15 @@ void Graph<T, Size, MaxEdges>::addEdge(std::string city1, std::string city2, T d
     }
 }
 
+/*
+    Find a vertex in the Graph
+        - returns vertex pointer if found
+        - returns nullptr if not found
+*/
 template <typename T, size_t Size, size_t MaxEdges>
 vertex<T, MaxEdges> *Graph<T, Size, MaxEdges>::findVertex(std::string name)
 {
-    vertex<T, MaxEdges> *found;
+    vertex<T, MaxEdges> *found = nullptr;
     for (int i = 0; i < vertices.size(); i++)
     {
         if (vertices[i].name == name)
@@ -122,6 +151,9 @@ vertex<T, MaxEdges> *Graph<T, Size, MaxEdges>::findVertex(std::string name)
     return found;
 }
 
+/*
+    Display edges in no particular order
+*/
 template <typename T, size_t Size, size_t MaxEdges>
 void Graph<T, Size, MaxEdges>::displayEdges()
 {
@@ -143,6 +175,10 @@ void Graph<T, Size, MaxEdges>::displayEdges()
     }
 }
 
+/*
+    Check if targetCity is in city's adjacency list
+        - returns True if yes, False if no
+*/
 template <typename T, size_t Size, size_t MaxEdges>
 bool Graph<T, Size, MaxEdges>::inEdges(std::string city, std::string targetCity)
 {
@@ -160,15 +196,23 @@ bool Graph<T, Size, MaxEdges>::inEdges(std::string city, std::string targetCity)
     return false;
 }
 
+/*
+    Walk through vertices and mark them all unvisited
+*/
 template <typename T, size_t Size, size_t MaxEdges>
 void Graph<T, Size, MaxEdges>::setAllVerticesUnvisited()
 {
-    for (int i = 0; i < vertices.size(); i++)
+    for (int i = 0; i < Size; i++)
     {
         vertices[i].visited = false;
+        vertices[i].solved = false;
+        vertices[i].distDijk = 0;
     }
 }
 
+/*
+    Print the DFT
+*/
 template <typename T, size_t Size, size_t MaxEdges>
 void Graph<T, Size, MaxEdges>::printDFT()
 {
@@ -180,6 +224,9 @@ void Graph<T, Size, MaxEdges>::printDFT()
     }
 }
 
+/*
+    Print the BFT
+*/
 template <typename T, size_t Size, size_t MaxEdges>
 void Graph<T, Size, MaxEdges>::printBFT()
 {
@@ -191,6 +238,9 @@ void Graph<T, Size, MaxEdges>::printBFT()
     }
 }
 
+/*
+    Traverse the Graph Breadth first
+*/
 template <typename T, size_t Size, size_t MaxEdges>
 void Graph<T, Size, MaxEdges>::BFT_traversal(vertex<T, MaxEdges> *v)
 {
@@ -219,6 +269,9 @@ void Graph<T, Size, MaxEdges>::BFT_traversal(vertex<T, MaxEdges> *v)
     }
 }
 
+/*
+    Traverse the Graph Depth First
+*/
 template <typename T, size_t Size, size_t MaxEdges>
 void Graph<T, Size, MaxEdges>::DFT_traversal(vertex<T, MaxEdges> *v)
 {
@@ -226,6 +279,9 @@ void Graph<T, Size, MaxEdges>::DFT_traversal(vertex<T, MaxEdges> *v)
     DFT_recursive(v);
 }
 
+/*
+    Recursive helper function used by DFT_traversal
+*/
 template <typename T, size_t MaxEdges>
 void DFT_recursive(vertex<T, MaxEdges> *v)
 {
@@ -240,7 +296,10 @@ void DFT_recursive(vertex<T, MaxEdges> *v)
     }
 }
 
-// User gives a destination matrix to store in
+/*
+    convert adjancency list to a matrix
+    store this matrix in a given matrix 
+*/
 template <typename T, size_t Size, size_t MaxEdges>
 void Graph<T, Size, MaxEdges>::adjListToMat(bool matrix[Size][Size])
 {
@@ -276,7 +335,10 @@ void Graph<T, Size, MaxEdges>::adjListToMat(bool matrix[Size][Size])
     }
 }
 
-// default to storing matrix in class adjMatrix
+/*
+    convert adjancency list to a matrix
+    default to storing matrix in class adjMatrix
+*/
 template <typename T, size_t Size, size_t MaxEdges>
 void Graph<T, Size, MaxEdges>::adjListToMat()
 {
@@ -310,6 +372,76 @@ void Graph<T, Size, MaxEdges>::adjListToMat()
         }
         cout << endl;
     }
+}
+
+/*
+    Dijkstrs's algorithm
+        - start is starting city name (string)
+        - end is ending city name (string)
+*/
+template <typename T, size_t Size, size_t MaxEdges>
+vertex<T, MaxEdges> *Graph<T, Size, MaxEdges>::dijkstraSearch(std::string start, std::string end)
+{
+    using namespace std;
+    setAllVerticesUnvisited();
+    vertex<T, MaxEdges> *vStart = findVertex(start);
+    if (!vStart)
+    {
+        cout << "Start city not found" << endl;
+        return nullptr;
+    }
+    vertex<T, MaxEdges> *vEnd = findVertex(end);
+    if (!vEnd)
+    {
+        cout << "Destination city not found" << endl;
+        return nullptr;
+    }
+    vStart->solved = true;
+
+    // Create a list to store solved vertices
+    // and append vStart
+    vector<vertex<T, MaxEdges> *> solvedList;
+    solvedList.push_back(vStart);
+
+    while (!vEnd->solved)
+    {
+        int minDist = INT8_MAX;
+        // pointer to keep track of solved node
+        vertex<T, MaxEdges> *solvedV = nullptr;
+
+        // iterater across list of solved vertices
+        for (int i = 0; i < solvedList.size(); i++)
+        {
+            vertex<T, MaxEdges> *s = solvedList[i];
+            // now iterate s's adjacency list
+
+            for (int j = 0; j < s->Edges.size(); j++)
+            {
+                if (s->Edges[j].v != nullptr)
+                {
+                    if (!s->Edges[j].v->solved)
+                    {
+                        //calculate the distance from vSTart
+                        int dist = s->distDijk + s->Edges[j].distance;
+                        // check if the distance is less than smallest distance thusfar
+                        if (dist < minDist)
+                        {
+                            solvedV = s->Edges[j].v;
+                            minDist = dist;
+                            //if you had parent ptr, update it here
+                        }
+                    }
+                }
+            }
+        }
+
+        solvedV->distDijk = minDist;
+        // solvedV->parent
+        solvedV->solved = true;
+        solvedList.push_back(solvedV);
+        cout << solvedV->name << endl;
+    }
+    return vEnd;
 }
 
 #endif // GRAPH_HPP
