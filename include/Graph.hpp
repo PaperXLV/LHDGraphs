@@ -36,10 +36,12 @@ public:
 
     void addVertex(std::string cityName);
     void addEdge(std::string city1, std::string city2, T distance);
+    bool inEdges(std::string city, std::string targetCity);
     void displayEdges();
     void printDFT();
     void printBFT();
     void setAllVerticesUnvisited();
+    void adjListToMat(std::string cityName);
 
 private:
     std::vector<vertex<T>> vertices; //stores vertices
@@ -194,6 +196,49 @@ void Graph<T>::DFT_traversal(vertex<T> *v)
 {
     std::cout << v->name << std::endl;
     DFT_recursive(v);
+}
+
+template <typename T>
+bool Graph<T>::inEdges(std::string city, std::string targetCity)
+{
+    vertex<T> *v1 = findVertex(city);
+    vertex<T> *v2 = findVertex(targetCity);
+
+    for (const auto edge : v1->Edges)
+    {
+        if (edge.v == v2)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+template <typename T>
+void Graph<T>::adjListToMat(std::string cityName)
+{
+    using namespace std;
+    vertex<T> *v = findVertex(cityName);
+
+    // if edge back to our city exists in the other node's Edges, print the statement
+    // for (const auto edge1 : v->Edges)
+    // {
+    //     cout << v->name << "-->" << edge1.v->name << endl;
+    //     for (const auto edge2 : edge1.v->Edges)
+    //     {
+    //         if (inEdges(edge2.v->name, v->name))
+    //         {
+    //             cout << v->name << "<--"
+    //                  << edge2.v->name << endl;
+    //         }
+    //     }
+    // }
+
+    // for (int i = 0; i < v->Edges.size(); i++)
+    // {
+    //     for(int j = 0; j < )
+    // }
 }
 
 #endif // GRAPH_HPP

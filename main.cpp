@@ -24,9 +24,16 @@ int main()
 	g.addEdge("Moab", "Fruita", 6);
 	g.addEdge("Las Vegas", "Moab", 4);
 
+	g.addEdge("Denver", "Boulder", 5);
+
 	//g.displayEdges();
 
 	g.adjListToMat("Boulder");
+
+	// if (g.inEdges("Boulder", "Moab"))
+	// {
+	// 	cout << "It works!" << endl;
+	// }
 
 	return 0;
 }
