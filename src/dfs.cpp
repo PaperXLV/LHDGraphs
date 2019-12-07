@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include "include/graph.hpp"
+#include "graph.hpp"
 
 #define N 6
 
@@ -9,7 +9,7 @@ using namespace std;
 int main()
 {
 
-	Graph<int, N> g;
+	Graph<int, 6, 3> g;
 
 	g.addVertex("Boulder");
 	g.addVertex("Denver");
@@ -29,15 +29,6 @@ int main()
 	g.addEdge("Denver", "Boulder", 5);
 
 	//g.displayEdges();
-
-	bool matrix[N][N];
-	for (int i = 0; i < N; i++)
-	{
-		for (int j = 0; j < N; j++)
-		{
-			matrix[i][j] = false;
-		}
-	}
 	g.adjListToMat();
 
 	return 0;
