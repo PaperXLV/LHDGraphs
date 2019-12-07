@@ -17,7 +17,4 @@ add_executable(DFS ${PROJECT_SOURCE_DIR}/src/dfs.cpp)
 add_executable(AdjM ${PROJECT_SOURCE_DIR}/src/adj_mat.cpp)
 
 target_include_directories(DFS PUBLIC ${PROJECT_SOURCE_DIR}/include)
-<<<<<<< HEAD
 target_include_directories(AdjM PUBLIC ${PROJECT_SOURCE_DIR}/include)
-=======
->>>>>>> master
