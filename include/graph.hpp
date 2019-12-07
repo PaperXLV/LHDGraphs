@@ -49,6 +49,7 @@ public:
     void printDFT();
     void printBFT();
     void setAllVerticesUnvisited();
+    const std::array<vertex<T, MaxEdges>, Size>& getVertices();
 
 private:
     std::array<vertex<T, MaxEdges>, Size> vertices; //stores vertices
@@ -119,6 +120,12 @@ void Graph<T, Size, MaxEdges>::setAllVerticesUnvisited()
     {
         vertices[i].visited = false;
     }
+}
+
+template <typename T, size_t Size, size_t MaxEdges>
+const std::array<vertex<T, MaxEdges>, Size>& Graph<T, Size, MaxEdges>::getVertices()
+{
+    return vertices;
 }
 
 template <typename T, size_t Size, size_t MaxEdges>

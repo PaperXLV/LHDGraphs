@@ -11,7 +11,8 @@
 
 #include <iostream>
 #include <fstream>
-#include<string>
+#include <string>
+#include <vector>
 #include <boost/graph/graphviz.hpp>
 #include <graphviz/gvc.h>
 
