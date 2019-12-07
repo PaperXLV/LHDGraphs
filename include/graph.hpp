@@ -15,6 +15,11 @@ vertex in the graph. */
 template <typename T, size_t MaxEdges>
 struct Edge
 {
+    constexpr Edge()
+    {
+        distance = 0;
+        v = nullptr;
+    };
     vertex<T, MaxEdges> *v;
     T distance;
 };
@@ -31,7 +36,7 @@ struct vertex
         Edges = {};
     };
 
-    std::string name;
+    std::string_view name;
     bool visited;
     int currentEdges;
     std::array<Edge<T, MaxEdges>, MaxEdges> Edges; //stores edges to adjacent vertices
@@ -43,21 +48,23 @@ class Graph
 public:
     constexpr Graph();
 
-    void addVertex(std::string cityName);
-    void addEdge(std::string city1, std::string city2, T distance);
-    bool inEdges(std::string city, std::string targetCity);
+    constexpr void addVertex(std::string_view name);
+    constexpr void addEdge(std::string_view name1, std::string_view name2, T distance);
+    constexpr bool inEdges(std::string_view source, std::string_view target);
     void displayEdges();
     void printDFT();
     void printBFT();
-    void setAllVerticesUnvisited();
+    constexpr void setAllVerticesUnvisited();
     void adjListToMat(bool matrix[Size][Size]);
     void adjListToMat();
 
 private:
     std::array<vertex<T, MaxEdges>, Size> vertices; //stores vertices
+    int currentVertices{0};
+
     bool adjMatrix[Size][Size];
 
-    vertex<T, MaxEdges> *findVertex(std::string name);
+    constexpr vertex<T, MaxEdges> *findVertex(std::string_view name);
     void BFT_traversal(vertex<T, MaxEdges> *v);
     void DFT_traversal(vertex<T, MaxEdges> *v);
 };
@@ -75,17 +82,16 @@ constexpr Graph<T, Size, MaxEdges>::Graph()
 }
 
 template <typename T, size_t Size, size_t MaxEdges>
-void Graph<T, Size, MaxEdges>::addVertex(std::string cityName)
+constexpr void Graph<T, Size, MaxEdges>::addVertex(std::string_view cityName)
 {
-    static int current = 0;
     vertex<T, MaxEdges> v1;
     v1.name = cityName;
-    vertices[current] = v1;
-    current += 1;
+    vertices[currentVertices] = v1;
+    currentVertices++;
 }
 
 template <typename T, size_t Size, size_t MaxEdges>
-void Graph<T, Size, MaxEdges>::addEdge(std::string city1, std::string city2, T distance)
+constexpr void Graph<T, Size, MaxEdges>::addEdge(std::string_view city1, std::string_view city2, T distance)
 {
     for (int i = 0; i < vertices.size(); i++)
     {
@@ -107,7 +113,7 @@ void Graph<T, Size, MaxEdges>::addEdge(std::string city1, std::string city2, T d
 }
 
 template <typename T, size_t Size, size_t MaxEdges>
-vertex<T, MaxEdges> *Graph<T, Size, MaxEdges>::findVertex(std::string name)
+constexpr vertex<T, MaxEdges> *Graph<T, Size, MaxEdges>::findVertex(std::string_view name)
 {
     vertex<T, MaxEdges> *found;
     for (int i = 0; i < vertices.size(); i++)
@@ -144,7 +150,7 @@ void Graph<T, Size, MaxEdges>::displayEdges()
 }
 
 template <typename T, size_t Size, size_t MaxEdges>
-bool Graph<T, Size, MaxEdges>::inEdges(std::string city, std::string targetCity)
+constexpr bool Graph<T, Size, MaxEdges>::inEdges(std::string_view city, std::string_view targetCity)
 {
     vertex<T, MaxEdges> *v1 = findVertex(city);
     vertex<T, MaxEdges> *v2 = findVertex(targetCity);
@@ -161,7 +167,7 @@ bool Graph<T, Size, MaxEdges>::inEdges(std::string city, std::string targetCity)
 }
 
 template <typename T, size_t Size, size_t MaxEdges>
-void Graph<T, Size, MaxEdges>::setAllVerticesUnvisited()
+constexpr void Graph<T, Size, MaxEdges>::setAllVerticesUnvisited()
 {
     for (int i = 0; i < vertices.size(); i++)
     {
