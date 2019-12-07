@@ -24,7 +24,7 @@ int main()
 	g.addEdge("Moab", "Fruita", 6);
 	g.addEdge("Las Vegas", "Moab", 4);
 
-	g.displayEdges();
+	g.addEdge("Denver", "Boulder", 5);
 
 	g.printDFT();
 

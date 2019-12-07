@@ -41,23 +41,38 @@ template <typename T, size_t Size, size_t MaxEdges>
 class Graph
 {
 public:
-    constexpr Graph() {}
+    constexpr Graph();
 
     void addVertex(std::string cityName);
     void addEdge(std::string city1, std::string city2, T distance);
+    bool inEdges(std::string city, std::string targetCity);
     void displayEdges();
     void printDFT();
     void printBFT();
     void setAllVerticesUnvisited();
+    void adjListToMat(bool matrix[Size][Size]);
+    void adjListToMat();
 
 private:
     std::array<vertex<T, MaxEdges>, Size> vertices; //stores vertices
+    bool adjMatrix[Size][Size];
 
     vertex<T, MaxEdges> *findVertex(std::string name);
-
     void BFT_traversal(vertex<T, MaxEdges> *v);
     void DFT_traversal(vertex<T, MaxEdges> *v);
 };
+
+template <typename T, size_t Size, size_t MaxEdges>
+constexpr Graph<T, Size, MaxEdges>::Graph()
+{
+    for (int i = 0; i < Size; i++)
+    {
+        for (int j = 0; j < Size; j++)
+        {
+            adjMatrix[i][j] = false;
+        }
+    }
+}
 
 template <typename T, size_t Size, size_t MaxEdges>
 void Graph<T, Size, MaxEdges>::addVertex(std::string cityName)
@@ -92,6 +107,22 @@ void Graph<T, Size, MaxEdges>::addEdge(std::string city1, std::string city2, T d
 }
 
 template <typename T, size_t Size, size_t MaxEdges>
+vertex<T, MaxEdges> *Graph<T, Size, MaxEdges>::findVertex(std::string name)
+{
+    vertex<T, MaxEdges> *found;
+    for (int i = 0; i < vertices.size(); i++)
+    {
+        if (vertices[i].name == name)
+        {
+            found = &vertices[i];
+            break;
+        }
+    }
+
+    return found;
+}
+
+template <typename T, size_t Size, size_t MaxEdges>
 void Graph<T, Size, MaxEdges>::displayEdges()
 {
     for (int i = 0; i < vertices.size(); i++)
@@ -110,6 +141,23 @@ void Graph<T, Size, MaxEdges>::displayEdges()
         }
         std::cout << std::endl;
     }
+}
+
+template <typename T, size_t Size, size_t MaxEdges>
+bool Graph<T, Size, MaxEdges>::inEdges(std::string city, std::string targetCity)
+{
+    vertex<T, MaxEdges> *v1 = findVertex(city);
+    vertex<T, MaxEdges> *v2 = findVertex(targetCity);
+
+    for (const auto edge : v1->Edges)
+    {
+        if (edge.v == v2)
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 template <typename T, size_t Size, size_t MaxEdges>
@@ -140,36 +188,6 @@ void Graph<T, Size, MaxEdges>::printBFT()
     {
         if (!vertices[i].visited)
             BFT_traversal(&vertices[i]);
-    }
-}
-
-template <typename T, size_t Size, size_t MaxEdges>
-vertex<T, MaxEdges> *Graph<T, Size, MaxEdges>::findVertex(std::string name)
-{
-    vertex<T, MaxEdges> *found;
-    for (int i = 0; i < vertices.size(); i++)
-    {
-        if (vertices[i].name == name)
-        {
-            found = &vertices[i];
-            break;
-        }
-    }
-
-    return found;
-}
-
-template <typename T, size_t MaxEdges>
-void DFT_recursive(vertex<T, MaxEdges> *v)
-{
-    v->visited = true;
-    for (int i = 0; i < v->currentEdges; i++)
-    {
-        if (!v->Edges[i].v->visited)
-        {
-            std::cout << v->Edges[i].v->name << std::endl;
-            DFT_recursive(v->Edges[i].v);
-        }
     }
 }
 
@@ -206,6 +224,92 @@ void Graph<T, Size, MaxEdges>::DFT_traversal(vertex<T, MaxEdges> *v)
 {
     std::cout << v->name << std::endl;
     DFT_recursive(v);
+}
+
+template <typename T, size_t MaxEdges>
+void DFT_recursive(vertex<T, MaxEdges> *v)
+{
+    v->visited = true;
+    for (int i = 0; i < v->currentEdges; i++)
+    {
+        if (!v->Edges[i].v->visited)
+        {
+            std::cout << v->Edges[i].v->name << std::endl;
+            DFT_recursive(v->Edges[i].v);
+        }
+    }
+}
+
+// User gives a destination matrix to store in
+template <typename T, size_t Size, size_t MaxEdges>
+void Graph<T, Size, MaxEdges>::adjListToMat(bool matrix[Size][Size])
+{
+    using namespace std;
+    for (int i = 0; i < Size; i++)
+    {
+        for (int j = 0; j < Size; j++)
+        {
+            // if (vertices[i].name != "")
+            // {
+            if (inEdges(vertices[j].name, vertices[i].name))
+            {
+                matrix[i][j] = true;
+                cout << vertices[j].name << "-->" << vertices[i].name << "(" << i << "," << j << ")" << endl;
+            }
+            // cout << v->name << "-->" << v->Edges[i].v->name << endl;
+            if (inEdges(vertices[i].name, vertices[j].name))
+            {
+                matrix[j][i] = true;
+                cout << vertices[i].name << "-->" << vertices[j].name << "(" << j << "," << i << ")" << endl;
+            }
+            // }
+        }
+    }
+    // Display matrix
+    for (int i = 0; i < Size; i++)
+    {
+        for (int j = 0; j < Size; j++)
+        {
+            cout << matrix[i][j] << "  ";
+        }
+        cout << endl;
+    }
+}
+
+// default to storing matrix in class adjMatrix
+template <typename T, size_t Size, size_t MaxEdges>
+void Graph<T, Size, MaxEdges>::adjListToMat()
+{
+    using namespace std;
+    for (int i = 0; i < Size; i++)
+    {
+        for (int j = 0; j < Size; j++)
+        {
+            // if (vertices[i].name != "")
+            // {
+            if (inEdges(vertices[j].name, vertices[i].name))
+            {
+                adjMatrix[i][j] = true;
+                cout << vertices[j].name << "-->" << vertices[i].name << "(" << i << "," << j << ")" << endl;
+            }
+            // cout << v->name << "-->" << v->Edges[i].v->name << endl;
+            if (inEdges(vertices[i].name, vertices[j].name))
+            {
+                adjMatrix[j][i] = true;
+                cout << vertices[i].name << "-->" << vertices[j].name << "(" << j << "," << i << ")" << endl;
+            }
+            // }
+        }
+    }
+    // Display matrix
+    for (int i = 0; i < Size; i++)
+    {
+        for (int j = 0; j < Size; j++)
+        {
+            cout << adjMatrix[i][j] << "  ";
+        }
+        cout << endl;
+    }
 }
 
 #endif // GRAPH_HPP
