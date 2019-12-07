@@ -1,4 +1,4 @@
-TODO List:\
+TODO List:
 - Graph Data Structure\
 Adjacency Matrix and Adjacency List\
             Conversion between them\
@@ -10,4 +10,12 @@ Adjacency Matrix and Adjacency List\
             Djikstras\
             Flow problems\
             Page rank\
-    Visualization\
+    Visualization
+
+Cmake Directions:\
+mkdir build\
+cd build\
+cmake ..\
+make
+
+Build binaries found in build/bin
