@@ -1,13 +1,13 @@
 #include <iostream>
 #include <vector>
-#include "include/Graph.hpp"
+#include "include/graph.hpp"
 
 using namespace std;
 
 int main()
 {
 
-	Graph<int> g;
+	Graph<int, 6> g;
 
 	g.addVertex("Boulder");
 	g.addVertex("Denver");
