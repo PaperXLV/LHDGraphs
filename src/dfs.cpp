@@ -2,8 +2,6 @@
 #include <vector>
 #include "graph.hpp"
 
-#define N 6
-
 using namespace std;
 
 int main()
@@ -28,8 +26,7 @@ int main()
 
 	g.addEdge("Denver", "Boulder", 5);
 
-	//g.displayEdges();
-	g.adjListToMat();
+	g.printDFT();
 
 	return 0;
 }
