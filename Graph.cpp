@@ -148,3 +148,13 @@ void Graph::DFT_traversal(vertex *v)
 	cout << v->name << endl;
 	DFT_recursive(v);
 }
+
+void Graph::adjListToMat(string cityName)
+{
+	vertex *v = findVertex(cityName);
+	cout << "Items in adj list:" << endl;
+	for (const auto elem : v->Edges)
+	{
+		cout << elem.v->name << endl;
+	}
+}

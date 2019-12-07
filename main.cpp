@@ -26,7 +26,7 @@ int main()
 
 	//g.displayEdges();
 
-	g.printBFT();
+	g.adjListToMat("Boulder");
 
 	return 0;
 }

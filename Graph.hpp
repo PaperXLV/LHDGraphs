@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <iostream>
+using namespace std;
 
 struct vertex;
 
@@ -18,9 +19,9 @@ struct Edge
 /*this is the struct for each vertex in the graph. */
 struct vertex
 {
-    std::string name;
+    string name;
     bool visited;
-    std::vector<Edge> Edges; //stores edges to adjacent vertices
+    vector<Edge> Edges; //stores edges to adjacent vertices
 };
 
 class Graph
@@ -28,17 +29,18 @@ class Graph
 public:
     Graph();
     ~Graph();
-    void addVertex(std::string cityName);
-    void addEdge(std::string city1, std::string city2, int distance);
+    void addVertex(string cityName);
+    void addEdge(string city1, string city2, int distance);
     void displayEdges();
     void printDFT();
     void printBFT();
     void setAllVerticesUnvisited();
+    void adjListToMat(string cityName);
 
 private:
-    std::vector<vertex> vertices; //stores vertices
+    vector<vertex> vertices; //stores vertices
 
-    vertex *findVertex(std::string name);
+    vertex *findVertex(string name);
     void BFT_traversal(vertex *v);
     void DFT_traversal(vertex *v);
 };
