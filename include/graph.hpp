@@ -32,7 +32,7 @@ template <typename T, size_t Size>
 class Graph
 {
 public:
-    constexpr Graph() {}
+    constexpr Graph();
 
     void addVertex(std::string cityName);
     void addEdge(std::string city1, std::string city2, T distance);
@@ -41,16 +41,29 @@ public:
     void printDFT();
     void printBFT();
     void setAllVerticesUnvisited();
-    void adjListToMat(std::string cityName);
+    void adjListToMat(bool matrix[Size][Size]);
+    void adjListToMat();
 
 private:
     std::array<vertex<T>, Size> vertices; //stores vertices
-
+    bool adjMatrix[Size][Size];
     vertex<T> *findVertex(std::string name);
 
     void BFT_traversal(vertex<T> *v);
     void DFT_traversal(vertex<T> *v);
 };
+
+template <typename T, size_t Size>
+constexpr Graph<T, Size>::Graph()
+{
+    for (int i = 0; i < Size; i++)
+    {
+        for (int j = 0; j < Size; j++)
+        {
+            adjMatrix[i][j] = false;
+        }
+    }
+}
 
 template <typename T, size_t Size>
 void Graph<T, Size>::addVertex(std::string cityName)
@@ -200,8 +213,8 @@ void Graph<T, Size>::DFT_traversal(vertex<T> *v)
     DFT_recursive(v);
 }
 
-template <typename T>
-bool Graph<T>::inEdges(std::string city, std::string targetCity)
+template <typename T, size_t Size>
+bool Graph<T, Size>::inEdges(std::string city, std::string targetCity)
 {
     vertex<T> *v1 = findVertex(city);
     vertex<T> *v2 = findVertex(targetCity);
@@ -217,30 +230,76 @@ bool Graph<T>::inEdges(std::string city, std::string targetCity)
     return false;
 }
 
-template <typename T>
-void Graph<T>::adjListToMat(std::string cityName)
+// User gives a destination matrix to store in
+template <typename T, size_t Size>
+void Graph<T, Size>::adjListToMat(bool matrix[Size][Size])
 {
     using namespace std;
-    vertex<T> *v = findVertex(cityName);
+    for (int i = 0; i < Size; i++)
+    {
+        for (int j = 0; j < Size; j++)
+        {
+            // if (vertices[i].name != "")
+            // {
+            if (inEdges(vertices[j].name, vertices[i].name))
+            {
+                matrix[i][j] = true;
+                cout << vertices[j].name << "-->" << vertices[i].name << "(" << i << "," << j << ")" << endl;
+            }
+            // cout << v->name << "-->" << v->Edges[i].v->name << endl;
+            if (inEdges(vertices[i].name, vertices[j].name))
+            {
+                matrix[j][i] = true;
+                cout << vertices[i].name << "-->" << vertices[j].name << "(" << j << "," << i << ")" << endl;
+            }
+            // }
+        }
+    }
+    // Display matrix
+    for (int i = 0; i < Size; i++)
+    {
+        for (int j = 0; j < Size; j++)
+        {
+            cout << matrix[i][j] << "  ";
+        }
+        cout << endl;
+    }
+}
 
-    // if edge back to our city exists in the other node's Edges, print the statement
-    // for (const auto edge1 : v->Edges)
-    // {
-    //     cout << v->name << "-->" << edge1.v->name << endl;
-    //     for (const auto edge2 : edge1.v->Edges)
-    //     {
-    //         if (inEdges(edge2.v->name, v->name))
-    //         {
-    //             cout << v->name << "<--"
-    //                  << edge2.v->name << endl;
-    //         }
-    //     }
-    // }
-
-    // for (int i = 0; i < v->Edges.size(); i++)
-    // {
-    //     for(int j = 0; j < )
-    // }
+// default to storing matrix in class adjMatrix
+template <typename T, size_t Size>
+void Graph<T, Size>::adjListToMat()
+{
+    using namespace std;
+    for (int i = 0; i < Size; i++)
+    {
+        for (int j = 0; j < Size; j++)
+        {
+            // if (vertices[i].name != "")
+            // {
+            if (inEdges(vertices[j].name, vertices[i].name))
+            {
+                adjMatrix[i][j] = true;
+                cout << vertices[j].name << "-->" << vertices[i].name << "(" << i << "," << j << ")" << endl;
+            }
+            // cout << v->name << "-->" << v->Edges[i].v->name << endl;
+            if (inEdges(vertices[i].name, vertices[j].name))
+            {
+                adjMatrix[j][i] = true;
+                cout << vertices[i].name << "-->" << vertices[j].name << "(" << j << "," << i << ")" << endl;
+            }
+            // }
+        }
+    }
+    // Display matrix
+    for (int i = 0; i < Size; i++)
+    {
+        for (int j = 0; j < Size; j++)
+        {
+            cout << adjMatrix[i][j] << "  ";
+        }
+        cout << endl;
+    }
 }
 
 #endif // GRAPH_HPP

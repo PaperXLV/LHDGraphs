@@ -2,12 +2,14 @@
 #include <vector>
 #include "include/graph.hpp"
 
+#define N 6
+
 using namespace std;
 
 int main()
 {
 
-	Graph<int, 6> g;
+	Graph<int, N> g;
 
 	g.addVertex("Boulder");
 	g.addVertex("Denver");
@@ -28,12 +30,15 @@ int main()
 
 	//g.displayEdges();
 
-	g.adjListToMat("Boulder");
-
-	// if (g.inEdges("Boulder", "Moab"))
-	// {
-	// 	cout << "It works!" << endl;
-	// }
+	bool matrix[N][N];
+	for (int i = 0; i < N; i++)
+	{
+		for (int j = 0; j < N; j++)
+		{
+			matrix[i][j] = false;
+		}
+	}
+	g.adjListToMat();
 
 	return 0;
 }
