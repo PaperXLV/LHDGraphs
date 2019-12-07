@@ -6,29 +6,38 @@
 #include <array>
 #include <queue>
 
-template <typename T>
+template <typename T, size_t MaxEdges>
 struct vertex;
 
 /*This is the struct for the adjacent vertices for each
 vertex in the graph. */
 
-template <typename T>
+template <typename T, size_t MaxEdges>
 struct Edge
 {
-    vertex<T> *v;
+    vertex<T, MaxEdges> *v;
     T distance;
 };
 
 /*this is the struct for each vertex in the graph. */
-template <typename T>
+template <typename T, size_t MaxEdges>
 struct vertex
 {
+    constexpr vertex()
+    {
+        name = "";
+        visited = false;
+        currentEdges = 0;
+        Edges = {};
+    };
+
     std::string name;
     bool visited;
-    std::vector<Edge<T>> Edges; //stores edges to adjacent vertices
+    int currentEdges;
+    std::array<Edge<T, MaxEdges>, MaxEdges> Edges; //stores edges to adjacent vertices
 };
 
-template <typename T, size_t Size>
+template <typename T, size_t Size, size_t MaxEdges>
 class Graph
 {
 public:
@@ -42,26 +51,26 @@ public:
     void setAllVerticesUnvisited();
 
 private:
-    std::array<vertex<T>, Size> vertices; //stores vertices
+    std::array<vertex<T, MaxEdges>, Size> vertices; //stores vertices
 
-    vertex<T> *findVertex(std::string name);
+    vertex<T, MaxEdges> *findVertex(std::string name);
 
-    void BFT_traversal(vertex<T> *v);
-    void DFT_traversal(vertex<T> *v);
+    void BFT_traversal(vertex<T, MaxEdges> *v);
+    void DFT_traversal(vertex<T, MaxEdges> *v);
 };
 
-template <typename T, size_t Size>
-void Graph<T, Size>::addVertex(std::string cityName)
+template <typename T, size_t Size, size_t MaxEdges>
+void Graph<T, Size, MaxEdges>::addVertex(std::string cityName)
 {
     static int current = 0;
-    vertex<T> v1;
+    vertex<T, MaxEdges> v1;
     v1.name = cityName;
     vertices[current] = v1;
     current += 1;
 }
 
-template <typename T, size_t Size>
-void Graph<T, Size>::addEdge(std::string city1, std::string city2, T distance)
+template <typename T, size_t Size, size_t MaxEdges>
+void Graph<T, Size, MaxEdges>::addEdge(std::string city1, std::string city2, T distance)
 {
     for (int i = 0; i < vertices.size(); i++)
     {
@@ -71,25 +80,26 @@ void Graph<T, Size>::addEdge(std::string city1, std::string city2, T distance)
             {
                 if (vertices[j].name == city2 && j != i)
                 {
-                    Edge<T> e0;
+                    Edge<T, MaxEdges> e0;
                     e0.v = &vertices[j];
                     e0.distance = distance;
-                    vertices[i].Edges.push_back(e0);
+                    vertices[i].Edges[vertices[i].currentEdges] = e0;
+                    vertices[i].currentEdges++;
                 }
             }
         }
     }
 }
 
-template <typename T, size_t Size>
-void Graph<T, Size>::displayEdges()
+template <typename T, size_t Size, size_t MaxEdges>
+void Graph<T, Size, MaxEdges>::displayEdges()
 {
     for (int i = 0; i < vertices.size(); i++)
     {
         std::cout << vertices[i].name << "-->";
-        for (int j = 0; j < vertices[i].Edges.size(); j++)
+        for (int j = 0; j < vertices[i].currentEdges; j++)
         {
-            if (j < vertices[i].Edges.size() - 1)
+            if (j < vertices[i].currentEdges - 1)
             {
                 std::cout << vertices[i].Edges[j].v->name << " (" << vertices[i].Edges[j].distance << " miles)***";
             }
@@ -102,8 +112,8 @@ void Graph<T, Size>::displayEdges()
     }
 }
 
-template <typename T, size_t Size>
-void Graph<T, Size>::setAllVerticesUnvisited()
+template <typename T, size_t Size, size_t MaxEdges>
+void Graph<T, Size, MaxEdges>::setAllVerticesUnvisited()
 {
     for (int i = 0; i < vertices.size(); i++)
     {
@@ -111,8 +121,8 @@ void Graph<T, Size>::setAllVerticesUnvisited()
     }
 }
 
-template <typename T, size_t Size>
-void Graph<T, Size>::printDFT()
+template <typename T, size_t Size, size_t MaxEdges>
+void Graph<T, Size, MaxEdges>::printDFT()
 {
     setAllVerticesUnvisited();
     for (int i = 0; i < vertices.size(); i++)
@@ -122,8 +132,8 @@ void Graph<T, Size>::printDFT()
     }
 }
 
-template <typename T, size_t Size>
-void Graph<T, Size>::printBFT()
+template <typename T, size_t Size, size_t MaxEdges>
+void Graph<T, Size, MaxEdges>::printBFT()
 {
     setAllVerticesUnvisited();
     for (int i = 0; i < vertices.size(); i++)
@@ -133,10 +143,10 @@ void Graph<T, Size>::printBFT()
     }
 }
 
-template <typename T, size_t Size>
-vertex<T> *Graph<T, Size>::findVertex(std::string name)
+template <typename T, size_t Size, size_t MaxEdges>
+vertex<T, MaxEdges> *Graph<T, Size, MaxEdges>::findVertex(std::string name)
 {
-    vertex<T> *found;
+    vertex<T, MaxEdges> *found;
     for (int i = 0; i < vertices.size(); i++)
     {
         if (vertices[i].name == name)
@@ -149,8 +159,8 @@ vertex<T> *Graph<T, Size>::findVertex(std::string name)
     return found;
 }
 
-template <typename T>
-void DFT_recursive(vertex<T> *v)
+template <typename T, size_t MaxEdges>
+void DFT_recursive(vertex<T, MaxEdges> *v)
 {
     v->visited = true;
     for (int i = 0; i < v->Edges.size(); i++)
@@ -163,23 +173,23 @@ void DFT_recursive(vertex<T> *v)
     }
 }
 
-template <typename T, size_t Size>
-void Graph<T, Size>::BFT_traversal(vertex<T> *v)
+template <typename T, size_t Size, size_t MaxEdges>
+void Graph<T, Size, MaxEdges>::BFT_traversal(vertex<T, MaxEdges> *v)
 {
     std::cout << v->name << std::endl;
     v->visited = true;
 
-    std::queue<vertex<T> *> q;
+    std::queue<vertex<T, MaxEdges> *> q;
     q.push(v);
 
-    vertex<T> *n;
+    vertex<T, MaxEdges> *n;
 
     while (!q.empty())
     {
         n = q.front();
         q.pop();
 
-        for (int i = 0; i < n->Edges.size(); i++)
+        for (int i = 0; i < n->currentEdges; i++)
         {
             if (!n->Edges[i].v->visited)
             {
@@ -191,8 +201,8 @@ void Graph<T, Size>::BFT_traversal(vertex<T> *v)
     }
 }
 
-template <typename T, size_t Size>
-void Graph<T, Size>::DFT_traversal(vertex<T> *v)
+template <typename T, size_t Size, size_t MaxEdges>
+void Graph<T, Size, MaxEdges>::DFT_traversal(vertex<T, MaxEdges> *v)
 {
     std::cout << v->name << std::endl;
     DFT_recursive(v);

@@ -7,7 +7,7 @@ using namespace std;
 int main()
 {
 
-	Graph<int, 6> g;
+	Graph<int, 6, 3> g;
 
 	g.addVertex("Boulder");
 	g.addVertex("Denver");
@@ -24,7 +24,7 @@ int main()
 	g.addEdge("Moab", "Fruita", 6);
 	g.addEdge("Las Vegas", "Moab", 4);
 
-	//g.displayEdges();
+	g.displayEdges();
 
 	g.printBFT();
 
