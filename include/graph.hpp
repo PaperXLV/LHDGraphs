@@ -30,6 +30,7 @@ struct vertex
         solved = false;
         currentEdges = 0;
         distDijk = 0;
+        dijkParent = nullptr;
         Edges = {};
     };
 
@@ -40,6 +41,7 @@ struct vertex
 
     // distDijk for weighted distance from starting vertex
     T distDijk;
+    vertex<T, MaxEdges> *dijkParent; //stores edges to adjacent vertices
     // solved member for Dijkstra's
     bool solved;
 };
@@ -63,6 +65,7 @@ public:
     void adjListToMat(bool matrix[Size][Size]);
     void adjListToMat();
     vertex<T, MaxEdges> *dijkstraSearch(std::string start, std::string end);
+    void dijkstraDisplay(std::string start, std::string end);
 
 private:
     std::array<vertex<T, MaxEdges>, Size> vertices; //stores vertices
@@ -378,6 +381,8 @@ void Graph<T, Size, MaxEdges>::adjListToMat()
     Dijkstrs's algorithm
         - start is starting city name (string)
         - end is ending city name (string)
+        - returns pointer to ending vertex
+          with appropriate distance set
 */
 template <typename T, size_t Size, size_t MaxEdges>
 vertex<T, MaxEdges> *Graph<T, Size, MaxEdges>::dijkstraSearch(std::string start, std::string end)
@@ -429,6 +434,7 @@ vertex<T, MaxEdges> *Graph<T, Size, MaxEdges>::dijkstraSearch(std::string start,
                             solvedV = s->Edges[j].v;
                             minDist = dist;
                             //if you had parent ptr, update it here
+                            solvedV->dijkParent = s;
                         }
                     }
                 }
@@ -439,9 +445,28 @@ vertex<T, MaxEdges> *Graph<T, Size, MaxEdges>::dijkstraSearch(std::string start,
         // solvedV->parent
         solvedV->solved = true;
         solvedList.push_back(solvedV);
-        cout << solvedV->name << endl;
+        // cout << solvedV->name << endl;
     }
     return vEnd;
+}
+
+/*
+    Print Dijkstrs's path 
+        - start is starting city name (string)
+        - end is ending city name (string)
+        - prints min distance path
+*/
+template <typename T, size_t Size, size_t MaxEdges>
+void Graph<T, Size, MaxEdges>::dijkstraDisplay(std::string start, std::string end)
+{
+    using namespace std;
+    vertex<T, MaxEdges> *vEnd = dijkstraSearch(start, end);
+    vertex<T, MaxEdges> *temp = vEnd;
+    while (temp != nullptr)
+    {
+        cout << temp->name << endl;
+        temp = temp->dijkParent;
+    }
 }
 
 #endif // GRAPH_HPP

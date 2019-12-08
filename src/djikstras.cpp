@@ -22,9 +22,16 @@ int main()
     g.addEdge("Moab", "Las Vegas", 9);
 
     // long edge, shouldn't take this path
-    g.addEdge("Boulder", "Las Vegas", 1);
+    g.addEdge("Boulder", "Las Vegas", 100);
 
-    g.dijkstraSearch("Boulder", "Las Vegas");
+    // vertex<int, 5> *last = g.dijkstraSearch("Boulder", "Las Vegas");
+    // vertex<int, 5> *temp = last;
+    // while (temp != nullptr)
+    // {
+    //     cout << temp->name << endl;
+    //     temp = temp->dijkParent;
+    // }
+    g.dijkstraDisplay("Boulder", "Las Vegas");
 
     return 0;
 }
