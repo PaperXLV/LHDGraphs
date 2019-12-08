@@ -91,4 +91,5 @@ void Graph<T, Size, MaxEdges>::dijkstraDisplay(std::string start, std::string en
         cout << temp->name << endl;
         temp = temp->dijkParent;
     }
+    cout << "Total Distance: " << vEnd->distDijk << endl;
 }
