@@ -23,17 +23,17 @@ template <typename T, size_t Size, size_t MaxEdges>
 void makeGraph(Graph<T, Size, MaxEdges> g)
 {
     //array of vector names
-    const char *names[Size];
+    //const char *names[Size];
+    std::array<std::string, Size> names;
     const std::array<vertex<int, MaxEdges>, Size> verticies = g.getVertices();
     // maxEdges is the total edges from all vectors
     int maxEdges = 0;
     // get verctor names and number of total edges
     for (int i = 0; i < Size; i++)
     {
-        std::string convert = std::string(verticies[i].name.data(), verticies[i].name.size());
-        const char *name = convert.c_str();
-        printf("%s\n", name);
-        names[i] = name;
+        std::string convert = verticies[i].name;
+        printf("%s\n", convert);
+        names[i] = convert;
 
         for (int j = 0; j <= i; j++)
         {
@@ -63,7 +63,7 @@ void makeGraph(Graph<T, Size, MaxEdges> g)
             for (int t = 0; t < Size; t++)
             {
                 std::cout << names[t] << newEdge.v->name << " " << t << std::endl;
-                if (names[t] == std::string(newEdge.v->name).c_str())
+                if (names[t] == newEdge.v->name)
                 { //find vertex number for name
                     edgeNumber = t;
                     t = Size;
@@ -91,7 +91,7 @@ void makeGraph(Graph<T, Size, MaxEdges> g)
     std::ofstream myfile;
     //write graph to gv file
     myfile.open("graph.gv");
-    boost::write_graphviz(myfile, gr, boost::make_label_writer(names));
+    boost::write_graphviz(myfile, gr, boost::make_label_writer(&names[0]));
     myfile.close();
     //open graph
     system("xdot graph.gv");

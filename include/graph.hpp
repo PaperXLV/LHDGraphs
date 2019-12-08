@@ -18,7 +18,19 @@ struct constexpr_str
           size(N - 1) // not count the trailing nul
     {
     }
+    constexpr constexpr_str() : str{"\0"}, size(0) {}
+
+    bool operator==(constexpr_str &obj)
+    {
+        return str == obj.str;
+    }
 };
+
+std::ostream &operator<<(std::ostream &os, const constexpr_str &str)
+{
+    os << str.str;
+    return os;
+}
 
 template <typename T, size_t MaxEdges>
 struct vertex;
@@ -41,7 +53,7 @@ struct vertex
 {
     constexpr vertex() : Edges{},
                          visited{false},
-                         name{},
+                         name(),
                          currentEdges{0} {};
 
     std::string_view name;
