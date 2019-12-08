@@ -6,6 +6,20 @@
 #include <array>
 #include <queue>
 
+struct constexpr_str
+{
+    const char *str;
+    size_t size;
+
+    // can only construct from a char[] literal
+    template <size_t N>
+    constexpr constexpr_str(const char (&s)[N])
+        : str(s),
+          size(N - 1) // not count the trailing nul
+    {
+    }
+};
+
 template <typename T, size_t MaxEdges>
 struct vertex;
 
