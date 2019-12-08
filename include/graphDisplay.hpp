@@ -23,14 +23,17 @@ template <typename T, size_t Size, size_t MaxEdges>
 void makeGraph(Graph<T, Size, MaxEdges> g)
 {
     //array of vector names
-    const char *names[Size];
+    //const char *names[Size];
+    std::array<std::string, Size> names;
     const std::array<vertex<int, MaxEdges>, Size> verticies = g.getVertices();
     // maxEdges is the total edges from all vectors
     int maxEdges = 0;
     // get vector names and number of total edges
     for (int i = 0; i < Size; i++)
     {
-        names[i] = verticies[i].name.c_str();
+        std::string convert = std::string(verticies[i].name.data(), verticies[i].name.size());
+        names[i] = convert;
+
         maxEdges += verticies[i].currentEdges;
     }
     typedef std::pair<int, int> vertexEdge;
@@ -74,7 +77,7 @@ void makeGraph(Graph<T, Size, MaxEdges> g)
     std::ofstream myfile;
     //write graph to gv file
     myfile.open("graph.gv");
-    boost::write_graphviz(myfile, gr, boost::make_label_writer(names));
+    boost::write_graphviz(myfile, gr, boost::make_label_writer(&names[0]));
     myfile.close();
     //open graph
     system("xdot graph.gv");

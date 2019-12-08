@@ -18,4 +18,18 @@ cd build\
 cmake ..\
 make
 
-Build binaries found in build/bin
+Build binaries found in build/bin\
+
+
+Boost: \
+https://www.boost.org/users/history/version_1_71_0.html
+
+Graphviz: \
+https://graphviz.gitlab.io/_pages/Download/Download_source.html \
+have to configure and make it \
+./configure \
+make  \
+make install
+
+
+sudo apt install xdot

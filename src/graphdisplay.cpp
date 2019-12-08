@@ -1,8 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <boost/graph/graphviz.hpp>
-#include <graphviz/gvc.h>
 #include "graph.hpp"
 #include "graphDisplay.hpp"
 #include <vector>
