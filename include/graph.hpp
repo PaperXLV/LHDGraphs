@@ -6,32 +6,6 @@
 #include <array>
 #include <queue>
 
-struct constexpr_str
-{
-    const char *str;
-    size_t size;
-
-    // can only construct from a char[] literal
-    template <size_t N>
-    constexpr constexpr_str(const char (&s)[N])
-        : str(s),
-          size(N - 1) // not count the trailing nul
-    {
-    }
-    constexpr constexpr_str() : str{"\0"}, size(0) {}
-
-    bool operator==(constexpr_str &obj)
-    {
-        return str == obj.str;
-    }
-};
-
-std::ostream &operator<<(std::ostream &os, const constexpr_str &str)
-{
-    os << str.str;
-    return os;
-}
-
 template <typename T, size_t MaxEdges>
 struct vertex;
 
