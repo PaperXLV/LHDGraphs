@@ -17,10 +17,10 @@ add_executable(DFS ${PROJECT_SOURCE_DIR}/src/dfs.cpp)
 add_executable(AdjM ${PROJECT_SOURCE_DIR}/src/adj_mat.cpp)
 add_executable(DjiSearch ${PROJECT_SOURCE_DIR}/src/dijkstras.cpp)
 
-#add_executable(GraphDisplay ${PROJECT_SOURCE_DIR}/src/graphdisplay.cpp)
+add_executable(GraphDisplay ${PROJECT_SOURCE_DIR}/src/graphdisplay.cpp)
 
 target_include_directories(DFS PUBLIC ${PROJECT_SOURCE_DIR}/include)
-#target_include_directories(GraphDisplay PUBLIC ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/boost_1_71_0 ${PROJECT_SOURCE_DIR}/graphviz)
+target_include_directories(GraphDisplay PUBLIC ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/boost_1_71_0 ${PROJECT_SOURCE_DIR}/graphviz)
 
 
 target_include_directories(AdjM PUBLIC ${PROJECT_SOURCE_DIR}/include)

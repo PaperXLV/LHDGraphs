@@ -215,7 +215,7 @@ void Graph<T, Size, MaxEdges>::setAllVerticesUnvisited()
 }
 
 /*
-    Print the DFT
+    return vertecies 
 */
 template <typename T, size_t Size, size_t MaxEdges>
 const std::array<vertex<T, MaxEdges>, Size> &Graph<T, Size, MaxEdges>::getVertices()
@@ -223,6 +223,9 @@ const std::array<vertex<T, MaxEdges>, Size> &Graph<T, Size, MaxEdges>::getVertic
     return vertices;
 }
 
+/*
+    Print the DFT
+*/
 template <typename T, size_t Size, size_t MaxEdges>
 void Graph<T, Size, MaxEdges>::printDFT()
 {
