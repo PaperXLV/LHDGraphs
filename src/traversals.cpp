@@ -1,11 +1,12 @@
 #include <iostream>
 #include <vector>
 #include "graph.hpp"
+#include "traversals.hpp"
 
 using namespace std;
 
 template <typename T, size_t Size, size_t MaxEdges>
-constexpr string_view compute()
+constexpr Graph<T, Size, MaxEdges> generateGraph()
 {
 	Graph<T, Size, MaxEdges> g{};
 
@@ -24,13 +25,15 @@ constexpr string_view compute()
 	g.addEdge("Moab", "Fruita", 6);
 	g.addEdge("Las Vegas", "Moab", 4);
 
-	return g.getVertices()[0].name;
+	return g;
 }
 
 int main()
 {
-
-	constexpr string_view comp = compute<int, 6, 3>();
-	std::cout << comp << std::endl;
-	return 1;
+	Graph g = generateGraph<int, 6, 3>();
+	cout << "DEPTH-FIRST-TRAVERSAL: \n";
+	printDFT(g);
+	cout << "BREADTH-FIRST-TRAVERSAL: \n";
+	printBFT(g);
+	return 0;
 }

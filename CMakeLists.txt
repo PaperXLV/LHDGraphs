@@ -14,8 +14,8 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 
-add_executable(DFS ${PROJECT_SOURCE_DIR}/src/dfs.cpp)
+add_executable(Traversals ${PROJECT_SOURCE_DIR}/src/traversals.cpp)
 add_executable(AdjM ${PROJECT_SOURCE_DIR}/src/adj_mat.cpp)
 
-target_include_directories(DFS PUBLIC ${PROJECT_SOURCE_DIR}/include)
+target_include_directories(Traversals PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_include_directories(AdjM PUBLIC ${PROJECT_SOURCE_DIR}/include)

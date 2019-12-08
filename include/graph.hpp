@@ -47,9 +47,8 @@ public:
     constexpr void addEdge(std::string_view name1, std::string_view name2, T distance);
     constexpr bool inEdges(std::string_view source, std::string_view target);
     void displayEdges();
-    void printDFT();
-    void printBFT();
     constexpr std::array<vertex<T, MaxEdges>, Size> &getVertices();
+    const int getCurrentVertices();
     constexpr void setAllVerticesUnvisited();
     void adjListToMat(bool matrix[Size][Size]);
     void adjListToMat();
@@ -61,8 +60,6 @@ private:
     std::array<std::array<bool, Size>, Size> adjMatrix;
 
     constexpr vertex<T, MaxEdges> *findVertex(std::string_view name);
-    void BFT_traversal(vertex<T, MaxEdges> *v);
-    void DFT_traversal(vertex<T, MaxEdges> *v);
 };
 
 template <typename T, size_t Size, size_t MaxEdges>
@@ -169,82 +166,17 @@ constexpr std::array<vertex<T, MaxEdges>, Size> &Graph<T, Size, MaxEdges>::getVe
 }
 
 template <typename T, size_t Size, size_t MaxEdges>
+const int Graph<T, Size, MaxEdges>::getCurrentVertices()
+{
+    return currentVertices;
+}
+
+template <typename T, size_t Size, size_t MaxEdges>
 constexpr void Graph<T, Size, MaxEdges>::setAllVerticesUnvisited()
 {
     for (int i = 0; i < vertices.size(); i++)
     {
         vertices[i].visited = false;
-    }
-}
-
-template <typename T, size_t Size, size_t MaxEdges>
-void Graph<T, Size, MaxEdges>::printDFT()
-{
-    setAllVerticesUnvisited();
-    for (int i = 0; i < vertices.size(); i++)
-    {
-        if (!vertices[i].visited)
-            DFT_traversal(&vertices[i]);
-    }
-}
-
-template <typename T, size_t Size, size_t MaxEdges>
-void Graph<T, Size, MaxEdges>::printBFT()
-{
-    setAllVerticesUnvisited();
-    for (int i = 0; i < vertices.size(); i++)
-    {
-        if (!vertices[i].visited)
-            BFT_traversal(&vertices[i]);
-    }
-}
-
-template <typename T, size_t Size, size_t MaxEdges>
-void Graph<T, Size, MaxEdges>::BFT_traversal(vertex<T, MaxEdges> *v)
-{
-    std::cout << v->name << std::endl;
-    v->visited = true;
-
-    std::queue<vertex<T, MaxEdges> *> q;
-    q.push(v);
-
-    vertex<T, MaxEdges> *n;
-
-    while (!q.empty())
-    {
-        n = q.front();
-        q.pop();
-
-        for (int i = 0; i < n->currentEdges; i++)
-        {
-            if (!n->Edges[i].v->visited)
-            {
-                n->Edges[i].v->visited = true;
-                q.push(n->Edges[i].v);
-                std::cout << n->Edges[i].v->name << std::endl;
-            }
-        }
-    }
-}
-
-template <typename T, size_t Size, size_t MaxEdges>
-void Graph<T, Size, MaxEdges>::DFT_traversal(vertex<T, MaxEdges> *v)
-{
-    std::cout << v->name << std::endl;
-    DFT_recursive(v);
-}
-
-template <typename T, size_t MaxEdges>
-void DFT_recursive(vertex<T, MaxEdges> *v)
-{
-    v->visited = true;
-    for (int i = 0; i < v->currentEdges; i++)
-    {
-        if (!v->Edges[i].v->visited)
-        {
-            std::cout << v->Edges[i].v->name << std::endl;
-            DFT_recursive(v->Edges[i].v);
-        }
     }
 }
 
