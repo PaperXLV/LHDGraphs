@@ -2,3 +2,5 @@ a.out
 .vscode/
 *.gch
 build/*
+boost_1_71_0/*
+graphviz/*

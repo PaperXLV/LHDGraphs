@@ -62,6 +62,7 @@ public:
     void printDFT();
     void printBFT();
     void setAllVerticesUnvisited();
+    const std::array<vertex<T, MaxEdges>, Size> &getVertices();
     void adjListToMat(bool matrix[Size][Size]);
     void adjListToMat();
     vertex<T, MaxEdges> *dijkstraSearch(std::string start, std::string end);
@@ -216,6 +217,12 @@ void Graph<T, Size, MaxEdges>::setAllVerticesUnvisited()
 /*
     Print the DFT
 */
+template <typename T, size_t Size, size_t MaxEdges>
+const std::array<vertex<T, MaxEdges>, Size> &Graph<T, Size, MaxEdges>::getVertices()
+{
+    return vertices;
+}
+
 template <typename T, size_t Size, size_t MaxEdges>
 void Graph<T, Size, MaxEdges>::printDFT()
 {

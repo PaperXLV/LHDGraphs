@@ -28,8 +28,9 @@ vertex<T, MaxEdges> *Graph<T, Size, MaxEdges>::dijkstraSearch(std::string start,
 
     // Create a list to store solved vertices
     // and append vStart
-    vector<vertex<T, MaxEdges> *> solvedList;
-    solvedList.push_back(vStart);
+    array<vertex<T, MaxEdges> *, MaxEdges> solvedList;
+    int currentIndex = 0;
+    solvedList[currentIndex++] = vStart;
 
     while (!vEnd->solved)
     {
@@ -38,12 +39,12 @@ vertex<T, MaxEdges> *Graph<T, Size, MaxEdges>::dijkstraSearch(std::string start,
         vertex<T, MaxEdges> *solvedV = nullptr;
 
         // iterater across list of solved vertices
-        for (int i = 0; i < solvedList.size(); i++)
+        for (int i = 0; i < currentIndex; i++)
         {
             vertex<T, MaxEdges> *s = solvedList[i];
             // now iterate s's adjacency list
 
-            for (int j = 0; j < s->Edges.size(); j++)
+            for (int j = 0; j < s->currentEdges; j++)
             {
                 if (s->Edges[j].v != nullptr)
                 {
@@ -67,7 +68,7 @@ vertex<T, MaxEdges> *Graph<T, Size, MaxEdges>::dijkstraSearch(std::string start,
         solvedV->distDijk = minDist;
         // solvedV->parent
         solvedV->solved = true;
-        solvedList.push_back(solvedV);
+        solvedList[currentIndex++] = solvedV;
         // cout << solvedV->name << endl;
     }
     return vEnd;
