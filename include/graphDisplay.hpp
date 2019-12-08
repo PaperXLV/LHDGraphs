@@ -28,7 +28,7 @@ void makeGraph(Graph<T, Size, MaxEdges> g)
     const std::array<vertex<int, MaxEdges>, Size> verticies = g.getVertices();
     // maxEdges is the total edges from all vectors
     int maxEdges = 0;
-    // get verctor names and number of total edges
+    // get vector names and number of total edges
     for (int i = 0; i < Size; i++)
     {
         std::string convert = std::string(verticies[i].name.data(), verticies[i].name.size());
@@ -41,7 +41,6 @@ void makeGraph(Graph<T, Size, MaxEdges> g)
     vertexEdge usedBy[maxEdges];
     //location in the used_by array while adding values
     int usedByLocation = 0;
-
     for (int i = 0; i < Size; i++)
     {
         for (int j = 0; j < verticies[i].currentEdges; j++)

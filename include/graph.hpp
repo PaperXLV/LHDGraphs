@@ -11,13 +11,13 @@ struct vertex;
 
 /*This is the struct for the adjacent vertices for each
 vertex in the graph. */
-
 template <typename T, size_t MaxEdges>
 struct Edge
 {
     constexpr Edge() : v{nullptr},
                        distance{0} {};
     vertex<T, MaxEdges> *v;
+    // distance of the single edge
     T distance;
 };
 
@@ -25,17 +25,39 @@ struct Edge
 template <typename T, size_t MaxEdges>
 struct vertex
 {
+    // constexpr vertex()
+    // {
+    //     name = "";
+    //     visited = false;
+    //     solved = false;
+    //     currentEdges = 0;
+    //     distDijk = 0;
+    //     dijkParent = nullptr;
+    //     Edges = {};
+    // };
     constexpr vertex() : Edges{},
                          visited{false},
                          name(),
-                         currentEdges{0} {};
+                         currentEdges{0},
+                         solved{false},
+                         distDijk{0},
+                         dijkParent{nullptr} {};
 
     std::string_view name;
     bool visited;
     int currentEdges;
     std::array<Edge<T, MaxEdges>, MaxEdges> Edges; //stores edges to adjacent vertices
+
+    // distDijk for weighted distance from starting vertex
+    T distDijk;
+    vertex<T, MaxEdges> *dijkParent; //stores edges to adjacent vertices
+    // solved member for Dijkstra's
+    bool solved;
 };
 
+/* 
+    Main Graph instance
+*/
 template <typename T, size_t Size, size_t MaxEdges>
 class Graph
 {
@@ -52,6 +74,8 @@ public:
     constexpr void setAllVerticesUnvisited();
     void adjListToMat(bool matrix[Size][Size]);
     void adjListToMat();
+    vertex<T, MaxEdges> *dijkstraSearch(std::string start, std::string end);
+    void dijkstraDisplay(std::string start, std::string end);
 
 private:
     std::array<vertex<T, MaxEdges>, Size> vertices; //stores vertices
@@ -62,6 +86,9 @@ private:
     constexpr vertex<T, MaxEdges> *findVertex(std::string_view name);
 };
 
+/*
+    Graph constructor. Initializes its adjMatrix to zeros
+*/
 template <typename T, size_t Size, size_t MaxEdges>
 constexpr Graph<T, Size, MaxEdges>::Graph() : adjMatrix{}
 {
@@ -74,6 +101,10 @@ constexpr Graph<T, Size, MaxEdges>::Graph() : adjMatrix{}
     }
 }
 
+/*
+    Add a vertex to the graph
+        - Takes in the name (string) of the city to be added
+*/
 template <typename T, size_t Size, size_t MaxEdges>
 constexpr void Graph<T, Size, MaxEdges>::addVertex(std::string_view cityName)
 {
@@ -83,6 +114,12 @@ constexpr void Graph<T, Size, MaxEdges>::addVertex(std::string_view cityName)
     currentVertices++;
 }
 
+/*
+    Add an edge between two verticies
+        - city 2 will be added to city1's adjacency list
+        - will only add in a single direction
+        - distance is the weight of the Edge between the verticies
+*/
 template <typename T, size_t Size, size_t MaxEdges>
 constexpr void Graph<T, Size, MaxEdges>::addEdge(std::string_view city1, std::string_view city2, T distance)
 {
@@ -105,10 +142,15 @@ constexpr void Graph<T, Size, MaxEdges>::addEdge(std::string_view city1, std::st
     }
 }
 
+/*
+    Find a vertex in the Graph
+        - returns vertex pointer if found
+        - returns nullptr if not found
+*/
 template <typename T, size_t Size, size_t MaxEdges>
 constexpr vertex<T, MaxEdges> *Graph<T, Size, MaxEdges>::findVertex(std::string_view name)
 {
-    vertex<T, MaxEdges> *found;
+    vertex<T, MaxEdges> *found = nullptr;
     for (int i = 0; i < vertices.size(); i++)
     {
         if (vertices[i].name == name)
@@ -121,6 +163,9 @@ constexpr vertex<T, MaxEdges> *Graph<T, Size, MaxEdges>::findVertex(std::string_
     return found;
 }
 
+/*
+    Display edges in no particular order
+*/
 template <typename T, size_t Size, size_t MaxEdges>
 void Graph<T, Size, MaxEdges>::displayEdges()
 {
@@ -142,6 +187,10 @@ void Graph<T, Size, MaxEdges>::displayEdges()
     }
 }
 
+/*
+    Check if targetCity is in city's adjacency list
+        - returns True if yes, False if no
+*/
 template <typename T, size_t Size, size_t MaxEdges>
 constexpr bool Graph<T, Size, MaxEdges>::inEdges(std::string_view city, std::string_view targetCity)
 {
@@ -171,6 +220,9 @@ const int Graph<T, Size, MaxEdges>::getCurrentVertices()
     return currentVertices;
 }
 
+/*
+    Walk through vertices and mark them all unvisited
+*/
 template <typename T, size_t Size, size_t MaxEdges>
 constexpr void Graph<T, Size, MaxEdges>::setAllVerticesUnvisited()
 {
@@ -251,5 +303,6 @@ void Graph<T, Size, MaxEdges>::adjListToMat()
         cout << endl;
     }
 }
+
 
 #endif // GRAPH_HPP
