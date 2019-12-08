@@ -25,7 +25,7 @@ void makeGraph(Graph<T, Size, MaxEdges> g)
     //array of vector names
     //const char *names[Size];
     std::array<std::string, Size> names;
-    const std::array<vertex<int, MaxEdges>, Size> verticies = g.getVertices();
+    const std::array<vertex<T, MaxEdges>, Size> verticies = g.getVertices();
     // maxEdges is the total edges from all vectors
     int maxEdges = 0;
     // get vector names and number of total edges
