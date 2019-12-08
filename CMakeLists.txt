@@ -16,7 +16,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 
 
 add_executable(AdjM ${PROJECT_SOURCE_DIR}/src/adj_mat.cpp)
-add_executable(DjiSearch ${PROJECT_SOURCE_DIR}/src/dijkstras.cpp)
+add_executable(DijSearch ${PROJECT_SOURCE_DIR}/src/dijkstras.cpp)
 add_executable(Traversals ${PROJECT_SOURCE_DIR}/src/traversals.cpp)
 add_executable(GraphDisplay ${PROJECT_SOURCE_DIR}/src/graphdisplay.cpp)
 
