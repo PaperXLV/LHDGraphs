@@ -25,7 +25,7 @@ constexpr Graph<T, Size, MaxEdges> generateGraph()
 
 int main()
 {
-    constexpr Graph<int, 6, 3> g2 = PrimsMST(generateGraph<int, 6, 3>());
+    Graph<int, 6, 3> g2 = PrimsMST(generateGraph<int, 6, 3>());
 
     return 0;
 }

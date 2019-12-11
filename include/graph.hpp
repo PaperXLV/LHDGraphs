@@ -5,6 +5,7 @@
 #include <iostream>
 #include <array>
 #include <queue>
+#include <string_view>
 
 template <typename T, size_t MaxEdges>
 struct vertex;
@@ -25,19 +26,9 @@ struct Edge
 template <typename T, size_t MaxEdges>
 struct vertex
 {
-    // constexpr vertex()
-    // {
-    //     name = "";
-    //     visited = false;
-    //     solved = false;
-    //     currentEdges = 0;
-    //     distDijk = 0;
-    //     dijkParent = nullptr;
-    //     Edges = {};
-    // };
     constexpr vertex() : Edges{},
                          visited{false},
-                         name(),
+                         name{""},
                          currentEdges{0},
                          solved{false},
                          distDijk{0},
@@ -63,7 +54,6 @@ class Graph
 {
 public:
     constexpr Graph();
-    //constexpr Graph(std::initializer_list<vertex<T, MaxEdges>> vertices, std::initializer_list<Edge<T, MaxEdges>> edges);
     ~Graph() = default;
 
     constexpr void addVertex(std::string_view name);
@@ -101,25 +91,7 @@ constexpr Graph<T, Size, MaxEdges>::Graph() : adjMatrix{}
         }
     }
 }
-#if 0
-template <typename T, size_t Size, size_t MaxEdges>
-constexpr Graph<T, Size, MaxEdges>::Graph(std::initializer_list<vertex<T, MaxEdges>> vert, std::initializer_list<Edge<T, MaxEdges>> edge) : adjMaxtrix{}
-{
-    vertices = std::move(vert);
-    for (const auto &v : vertices)
-    {
-        if (v.)
-    }
 
-    for (int i = 0; i < Size; i++)
-    {
-        for (int j = 0; j < Size; j++)
-        {
-            adjMatrix[i][j] = false;
-        }
-    }
-}
-#endif
 /*
     Add a vertex to the graph
         - Takes in the name (string) of the city to be added
@@ -321,6 +293,18 @@ void Graph<T, Size, MaxEdges>::adjListToMat()
         }
         cout << endl;
     }
+}
+
+template <typename T, size_t MaxEdges>
+constexpr bool operator==(vertex<T, MaxEdges> &ob1, vertex<T, MaxEdges> &ob2)
+{
+    return ob1.name == ob2.name;
+}
+
+template <typename T, size_t MaxEdges>
+constexpr bool operator==(const vertex<T, MaxEdges> &ob1, const vertex<T, MaxEdges> &ob2)
+{
+    return ob1.name == ob2.name;
 }
 
 #endif // GRAPH_HPP
