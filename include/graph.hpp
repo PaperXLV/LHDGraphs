@@ -63,14 +63,15 @@ class Graph
 {
 public:
     constexpr Graph();
+    //constexpr Graph(std::initializer_list<vertex<T, MaxEdges>> vertices, std::initializer_list<Edge<T, MaxEdges>> edges);
     ~Graph() = default;
 
     constexpr void addVertex(std::string_view name);
     constexpr void addEdge(std::string_view name1, std::string_view name2, T distance);
     constexpr bool inEdges(std::string_view source, std::string_view target);
     void displayEdges();
-    constexpr std::array<vertex<T, MaxEdges>, Size> &getVertices();
-    const int getCurrentVertices();
+    constexpr const std::array<vertex<T, MaxEdges>, Size> &getVertices() const;
+    constexpr int getCurrentVertices() const;
     constexpr void setAllVerticesUnvisited();
     void adjListToMat(bool matrix[Size][Size]);
     void adjListToMat();
@@ -100,7 +101,25 @@ constexpr Graph<T, Size, MaxEdges>::Graph() : adjMatrix{}
         }
     }
 }
+#if 0
+template <typename T, size_t Size, size_t MaxEdges>
+constexpr Graph<T, Size, MaxEdges>::Graph(std::initializer_list<vertex<T, MaxEdges>> vert, std::initializer_list<Edge<T, MaxEdges>> edge) : adjMaxtrix{}
+{
+    vertices = std::move(vert);
+    for (const auto &v : vertices)
+    {
+        if (v.)
+    }
 
+    for (int i = 0; i < Size; i++)
+    {
+        for (int j = 0; j < Size; j++)
+        {
+            adjMatrix[i][j] = false;
+        }
+    }
+}
+#endif
 /*
     Add a vertex to the graph
         - Takes in the name (string) of the city to be added
@@ -209,13 +228,13 @@ constexpr bool Graph<T, Size, MaxEdges>::inEdges(std::string_view city, std::str
 }
 
 template <typename T, size_t Size, size_t MaxEdges>
-constexpr std::array<vertex<T, MaxEdges>, Size> &Graph<T, Size, MaxEdges>::getVertices()
+constexpr const std::array<vertex<T, MaxEdges>, Size> &Graph<T, Size, MaxEdges>::getVertices() const
 {
     return vertices;
 }
 
 template <typename T, size_t Size, size_t MaxEdges>
-const int Graph<T, Size, MaxEdges>::getCurrentVertices()
+constexpr int Graph<T, Size, MaxEdges>::getCurrentVertices() const
 {
     return currentVertices;
 }
@@ -303,6 +322,5 @@ void Graph<T, Size, MaxEdges>::adjListToMat()
         cout << endl;
     }
 }
-
 
 #endif // GRAPH_HPP

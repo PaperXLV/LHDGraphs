@@ -11,7 +11,6 @@
 int main()
 {
     std::ifstream fin("../data-filtered.txt");
-    //fin.open("data-filtered.txt", std::ios::in);
 
     std::vector<std::vector<std::string>> graphData;
     std::vector<std::string> line;
