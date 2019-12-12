@@ -16,9 +16,9 @@ vertex in the graph. */
 template <typename T, size_t MaxEdges>
 struct Edge
 {
-    Edge() : v{nullptr},
+    Edge() : v{},
              distance{0} {};
-    std::shared_ptr<vertex<T, MaxEdges>> v;
+    std::weak_ptr<vertex<T, MaxEdges>> v;
     // distance of the single edge
     T distance;
 };
@@ -33,7 +33,7 @@ struct vertex
                currentEdges{0},
                solved{false},
                distDijk{0},
-               dijkParent{nullptr} {};
+               dijkParent{} {};
 
     std::string name;
     bool visited;
@@ -42,7 +42,7 @@ struct vertex
 
     // distDijk for weighted distance from starting vertex
     T distDijk;
-    std::shared_ptr<vertex<T, MaxEdges>> dijkParent; //stores edges to adjacent vertices
+    std::weak_ptr<vertex<T, MaxEdges>> dijkParent; //stores edges to adjacent vertices
     // solved member for Dijkstra's
     bool solved;
 };
@@ -67,7 +67,7 @@ public:
     void setAllVerticesUnvisited();
     void adjListToMat(bool matrix[Size][Size]);
     void adjListToMat();
-    std::shared_ptr<vertex<T, MaxEdges>> dijkstraSearch(std::string start, std::string end);
+    std::weak_ptr<vertex<T, MaxEdges>> dijkstraSearch(std::string start, std::string end);
     void dijkstraDisplay(std::string start, std::string end);
 
 private:
@@ -76,7 +76,7 @@ private:
 
     std::array<std::array<bool, Size>, Size> adjMatrix;
 
-    const std::shared_ptr<vertex<T, MaxEdges>> findVertex(std::string_view name);
+    const std::weak_ptr<vertex<T, MaxEdges>> findVertex(std::string_view name);
 };
 
 /*
@@ -141,9 +141,9 @@ void Graph<T, Size, MaxEdges>::addEdge(std::string_view city1, std::string_view 
         - returns nullptr if not found
 */
 template <typename T, size_t Size, size_t MaxEdges>
-const std::shared_ptr<vertex<T, MaxEdges>> Graph<T, Size, MaxEdges>::findVertex(std::string_view name)
+const std::weak_ptr<vertex<T, MaxEdges>> Graph<T, Size, MaxEdges>::findVertex(std::string_view name)
 {
-    std::shared_ptr<vertex<T, MaxEdges>> found = nullptr;
+    std::shared_ptr<vertex<T, MaxEdges>> found{};
     for (int i = 0; i < vertices.size(); i++)
     {
         if (vertices[i]->name == name)
@@ -187,12 +187,12 @@ void Graph<T, Size, MaxEdges>::displayEdges()
 template <typename T, size_t Size, size_t MaxEdges>
 bool Graph<T, Size, MaxEdges>::inEdges(std::string_view city, std::string_view targetCity)
 {
-    std::shared_ptr<vertex<T, MaxEdges>> v1 = findVertex(city);
-    std::shared_ptr<vertex<T, MaxEdges>> v2 = findVertex(targetCity);
+    std::shared_ptr<vertex<T, MaxEdges>> v1 = findVertex(city).lock();
+    std::shared_ptr<vertex<T, MaxEdges>> v2 = findVertex(targetCity).lock();
 
     for (const auto edge : v1->Edges)
     {
-        if (edge.v == v2)
+        if (edge.v.lock() == v2)
         {
             return true;
         }

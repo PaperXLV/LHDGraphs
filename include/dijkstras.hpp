@@ -8,21 +8,21 @@
           with appropriate distance set
 */
 template <typename T, size_t Size, size_t MaxEdges>
-std::shared_ptr<vertex<T, MaxEdges>> Graph<T, Size, MaxEdges>::dijkstraSearch(std::string start, std::string end)
+std::weak_ptr<vertex<T, MaxEdges>> Graph<T, Size, MaxEdges>::dijkstraSearch(std::string start, std::string end)
 {
     using namespace std;
     setAllVerticesUnvisited();
-    shared_ptr<vertex<T, MaxEdges>> vStart = findVertex(start);
+    shared_ptr<vertex<T, MaxEdges>> vStart = findVertex(start).lock();
     if (!vStart)
     {
         cout << "Start city not found" << endl;
-        return nullptr;
+        return std::weak_ptr<vertex<T, MaxEdges>>{};
     }
-    shared_ptr<vertex<T, MaxEdges>> vEnd = findVertex(end);
+    shared_ptr<vertex<T, MaxEdges>> vEnd = findVertex(end).lock();
     if (!vEnd)
     {
         cout << "Destination city not found" << endl;
-        return nullptr;
+        return std::weak_ptr<vertex<T, MaxEdges>>{};
     }
     vStart->solved = true;
 
@@ -46,16 +46,17 @@ std::shared_ptr<vertex<T, MaxEdges>> Graph<T, Size, MaxEdges>::dijkstraSearch(st
 
             for (int j = 0; j < s->currentEdges; j++)
             {
-                if (s->Edges[j].v != nullptr)
+                if (!s->Edges[j].v.expired())
                 {
-                    if (!s->Edges[j].v->solved)
+                    shared_ptr<vertex<T, MaxEdges>> v = s->Edges[j].v.lock();
+                    if (!v->solved)
                     {
                         //calculate the distance from vSTart
                         int dist = s->distDijk + s->Edges[j].distance;
                         // check if the distance is less than smallest distance thusfar
                         if (dist < minDist)
                         {
-                            solvedV = s->Edges[j].v;
+                            solvedV = v;
                             minDist = dist;
                             //if you had parent ptr, update it here
                             solvedV->dijkParent = s;
@@ -84,12 +85,12 @@ template <typename T, size_t Size, size_t MaxEdges>
 void Graph<T, Size, MaxEdges>::dijkstraDisplay(std::string start, std::string end)
 {
     using namespace std;
-    shared_ptr<vertex<T, MaxEdges>> vEnd = dijkstraSearch(start, end);
+    shared_ptr<vertex<T, MaxEdges>> vEnd = dijkstraSearch(start, end).lock();
     shared_ptr<vertex<T, MaxEdges>> temp = vEnd;
     while (temp != nullptr)
     {
         cout << temp->name << endl;
-        temp = temp->dijkParent;
+        temp = temp->dijkParent.lock();
     }
     cout << "Total Distance: " << vEnd->distDijk << endl;
 }

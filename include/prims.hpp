@@ -27,7 +27,7 @@ Graph<T, Size, MaxEdges> PrimsMST(const Graph<T, Size, MaxEdges> &g)
                               std::array<T, Size> &edges, std::array<std::shared_ptr<vertex<T, MaxEdges>>, Size> &edgeParents) {
         for (int i = 0; i < v->currentEdges; ++i)
         {
-            if (int index = getVertexIndex(v->Edges[i].v, vertices); index >= 0)
+            if (int index = getVertexIndex(v->Edges[i].v.lock(), vertices); index >= 0)
             {
                 if (v->Edges[i].distance < edges[index])
                 {
@@ -60,7 +60,6 @@ Graph<T, Size, MaxEdges> PrimsMST(const Graph<T, Size, MaxEdges> &g)
 
     std::array<std::shared_ptr<vertex<T, MaxEdges>>, Size> edgeParents{};
 
-    std::array<std::unique_ptr<Edge<T, MaxEdges>>, Size - 1> includedEdges{};
     // Initialize array of current max edge weights to determine when to add edges
     std::array<T, Size> cutEdge{};
     for (T &weight : cutEdge)

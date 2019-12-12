@@ -18,11 +18,15 @@ void BFT_traversal(std::shared_ptr<vertex<T, MaxEdges>> v)
 
         for (int i = 0; i < n->currentEdges; i++)
         {
-            if (!n->Edges[i].v->visited)
+            if (!n->Edges[i].v.expired())
             {
-                n->Edges[i].v->visited = true;
-                q.push(n->Edges[i].v);
-                std::cout << n->Edges[i].v->name << std::endl;
+                std::shared_ptr<vertex<T, MaxEdges>> edgeV = n->Edges[i].v.lock();
+                if (!edgeV->visited)
+                {
+                    edgeV->visited = true;
+                    q.push(edgeV);
+                    std::cout << edgeV->name << std::endl;
+                }
             }
         }
     }
@@ -41,10 +45,14 @@ void DFT_recursive(std::shared_ptr<vertex<T, MaxEdges>> v)
     v->visited = true;
     for (int i = 0; i < v->currentEdges; i++)
     {
-        if (!v->Edges[i].v->visited)
+        if (!v->Edges[i].v.expired())
         {
-            std::cout << v->Edges[i].v->name << std::endl;
-            DFT_recursive(v->Edges[i].v);
+            std::shared_ptr<vertex<T, MaxEdges>> edgeV = v->Edges[i].v.lock();
+            if (!edgeV->visited)
+            {
+                std::cout << edgeV->name << std::endl;
+                DFT_recursive(edgeV);
+            }
         }
     }
 }

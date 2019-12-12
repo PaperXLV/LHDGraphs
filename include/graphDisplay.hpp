@@ -50,10 +50,13 @@ void makeGraph(Graph<T, Size, MaxEdges> g)
             int edgeNumber = -1;
             for (int t = 0; t < Size; t++)
             {
-                if (names[t] == newEdge.v->name)
-                { //find vertex number for name
-                    edgeNumber = t;
-                    t = Size;
+                if (!newEdge.v.expired())
+                {
+                    if (names[t] == newEdge.v.lock()->name)
+                    { //find vertex number for name
+                        edgeNumber = t;
+                        t = Size;
+                    }
                 }
             }
             //add edge to edge dot array
