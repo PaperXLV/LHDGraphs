@@ -18,6 +18,7 @@ Graph<T, Size, MaxEdges> PrimsMST(const Graph<T, Size, MaxEdges> &g)
         return -1;
     };
 
+    // Need to also track edge parent info
     auto addVertexToMST = [&](const std::shared_ptr<vertex<T, MaxEdges>> &v,
                               std::array<std::shared_ptr<vertex<T, MaxEdges>>, Size> &includedVertices,
                               const std::array<std::shared_ptr<vertex<T, MaxEdges>>, Size> &vertices,
@@ -33,6 +34,15 @@ Graph<T, Size, MaxEdges> PrimsMST(const Graph<T, Size, MaxEdges> &g)
         {
             includedVertices[index] = v;
         }
+    };
+
+    auto outputEdges = [&](std::array<T, Size> &edges) {
+        std::cout << "Edges: \n";
+        for (const T edge : edges)
+        {
+            std::cout << edge << " ";
+        }
+        std::cout << "\n";
     };
 
     if (vertexCount <= 0)
@@ -63,6 +73,7 @@ Graph<T, Size, MaxEdges> PrimsMST(const Graph<T, Size, MaxEdges> &g)
     included[0] = true;
 
     addVertexToMST(vertices[0], includedVertices, vertices, cutEdge);
+    outputEdges(cutEdge);
 
     for (; currentIncluded < vertexCount; ++currentIncluded)
     {
@@ -79,8 +90,16 @@ Graph<T, Size, MaxEdges> PrimsMST(const Graph<T, Size, MaxEdges> &g)
         }
         if (index >= 0)
         {
+            std::cout << "Adding " << vertices[index]->name << "\n";
             addVertexToMST(vertices[index], includedVertices, vertices, cutEdge);
+            outputEdges(cutEdge);
+
             included[index] = true;
+        }
+        else
+        {
+            std::cout << "No edge found"
+                      << "\n";
         }
     }
 
