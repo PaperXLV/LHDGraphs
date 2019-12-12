@@ -71,10 +71,19 @@ Graph<T, Size, MaxEdges> constructLargeGraph(std::string filepath = "")
             const auto &line = graphData[j];
             for (int i = 1; i < line.size() - 2; i++)
             {
-                // stof is specialized for float, I think I need to change to more generic
-                if (j != i && stof(line[i]) != 0)
+                if constexpr (std::is_integral<T>::value)
                 {
-                    g.addEdge(line[0], g.getVertices()[i]->name, stof(line[i]));
+                    if (j != i && stoi(line[i]) != 0)
+                    {
+                        g.addEdge(line[0], g.getVertices()[i]->name, stoi(line[i]));
+                    }
+                }
+                else
+                {
+                    if (j != i && stof(line[i]) != 0)
+                    {
+                        g.addEdge(line[0], g.getVertices()[i]->name, stof(line[i]));
+                    }
                 }
             }
         }
@@ -90,6 +99,6 @@ int main()
 {
     //Graph<int, 6, 3> g2 = PrimsMST(generateGraph<int, 6, 3>());
     Graph<float, 30, 29> g = PrimsMST(constructLargeGraph<float, 30, 29>());
-    makeGraph<float, 30, 29>(g);
+    makeGraph(g);
     return 0;
 }

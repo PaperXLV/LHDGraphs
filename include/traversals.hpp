@@ -1,6 +1,5 @@
 #include "graph.hpp"
 
-//TODO:: alter algorithm to not take copies and instead const ref
 template <typename T, size_t Size, size_t MaxEdges>
 void BFT_traversal(std::shared_ptr<vertex<T, MaxEdges>> v)
 {

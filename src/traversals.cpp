@@ -6,7 +6,7 @@
 using namespace std;
 
 template <typename T, size_t Size, size_t MaxEdges>
-constexpr Graph<T, Size, MaxEdges> generateGraph()
+Graph<T, Size, MaxEdges> generateGraph()
 {
 	Graph<T, Size, MaxEdges> g{};
 
