@@ -16,8 +16,8 @@ vertex in the graph. */
 template <typename T, size_t MaxEdges>
 struct Edge
 {
-    constexpr Edge() : v{nullptr},
-                       distance{0} {};
+    Edge() : v{nullptr},
+             distance{0} {};
     std::shared_ptr<vertex<T, MaxEdges>> v;
     // distance of the single edge
     T distance;
@@ -27,13 +27,13 @@ struct Edge
 template <typename T, size_t MaxEdges>
 struct vertex
 {
-    constexpr vertex() : Edges{},
-                         visited{false},
-                         name{""},
-                         currentEdges{0},
-                         solved{false},
-                         distDijk{0},
-                         dijkParent{nullptr} {};
+    vertex() : Edges{},
+               visited{false},
+               name{""},
+               currentEdges{0},
+               solved{false},
+               distDijk{0},
+               dijkParent{nullptr} {};
 
     std::string_view name;
     bool visited;
@@ -54,16 +54,16 @@ template <typename T, size_t Size, size_t MaxEdges>
 class Graph
 {
 public:
-    constexpr Graph();
+    Graph();
     ~Graph() = default;
 
-    constexpr void addVertex(std::string_view name);
-    constexpr void addEdge(std::string_view name1, std::string_view name2, T distance);
-    constexpr bool inEdges(std::string_view source, std::string_view target);
+    void addVertex(std::string_view name);
+    void addEdge(std::string_view name1, std::string_view name2, T distance);
+    bool inEdges(std::string_view source, std::string_view target);
     void displayEdges();
-    constexpr const std::array<std::shared_ptr<vertex<T, MaxEdges>>, Size> &getVertices() const;
-    constexpr int getCurrentVertices() const;
-    constexpr void setAllVerticesUnvisited();
+    const std::array<std::shared_ptr<vertex<T, MaxEdges>>, Size> &getVertices() const;
+    int getCurrentVertices() const;
+    void setAllVerticesUnvisited();
     void adjListToMat(bool matrix[Size][Size]);
     void adjListToMat();
     std::shared_ptr<vertex<T, MaxEdges>> dijkstraSearch(std::string start, std::string end);
@@ -82,7 +82,7 @@ private:
     Graph constructor. Initializes its adjMatrix to zeros
 */
 template <typename T, size_t Size, size_t MaxEdges>
-constexpr Graph<T, Size, MaxEdges>::Graph() : adjMatrix{}
+Graph<T, Size, MaxEdges>::Graph() : adjMatrix{}
 {
     for (int i = 0; i < Size; i++)
     {
@@ -98,7 +98,7 @@ constexpr Graph<T, Size, MaxEdges>::Graph() : adjMatrix{}
         - Takes in the name (string) of the city to be added
 */
 template <typename T, size_t Size, size_t MaxEdges>
-constexpr void Graph<T, Size, MaxEdges>::addVertex(std::string_view cityName)
+void Graph<T, Size, MaxEdges>::addVertex(std::string_view cityName)
 {
     vertex<T, MaxEdges> v1;
     v1.name = cityName;
@@ -113,7 +113,7 @@ constexpr void Graph<T, Size, MaxEdges>::addVertex(std::string_view cityName)
         - distance is the weight of the Edge between the verticies
 */
 template <typename T, size_t Size, size_t MaxEdges>
-constexpr void Graph<T, Size, MaxEdges>::addEdge(std::string_view city1, std::string_view city2, T distance)
+void Graph<T, Size, MaxEdges>::addEdge(std::string_view city1, std::string_view city2, T distance)
 {
     for (int i = 0; i < vertices.size(); i++)
     {
@@ -184,7 +184,7 @@ void Graph<T, Size, MaxEdges>::displayEdges()
         - returns True if yes, False if no
 */
 template <typename T, size_t Size, size_t MaxEdges>
-constexpr bool Graph<T, Size, MaxEdges>::inEdges(std::string_view city, std::string_view targetCity)
+bool Graph<T, Size, MaxEdges>::inEdges(std::string_view city, std::string_view targetCity)
 {
     std::shared_ptr<vertex<T, MaxEdges>> v1 = findVertex(city);
     std::shared_ptr<vertex<T, MaxEdges>> v2 = findVertex(targetCity);
@@ -201,13 +201,13 @@ constexpr bool Graph<T, Size, MaxEdges>::inEdges(std::string_view city, std::str
 }
 
 template <typename T, size_t Size, size_t MaxEdges>
-constexpr const std::array<std::shared_ptr<vertex<T, MaxEdges>>, Size> &Graph<T, Size, MaxEdges>::getVertices() const
+const std::array<std::shared_ptr<vertex<T, MaxEdges>>, Size> &Graph<T, Size, MaxEdges>::getVertices() const
 {
     return vertices;
 }
 
 template <typename T, size_t Size, size_t MaxEdges>
-constexpr int Graph<T, Size, MaxEdges>::getCurrentVertices() const
+int Graph<T, Size, MaxEdges>::getCurrentVertices() const
 {
     return currentVertices;
 }
@@ -216,7 +216,7 @@ constexpr int Graph<T, Size, MaxEdges>::getCurrentVertices() const
     Walk through vertices and mark them all unvisited
 */
 template <typename T, size_t Size, size_t MaxEdges>
-constexpr void Graph<T, Size, MaxEdges>::setAllVerticesUnvisited()
+void Graph<T, Size, MaxEdges>::setAllVerticesUnvisited()
 {
     for (int i = 0; i < vertices.size(); i++)
     {
@@ -233,20 +233,16 @@ void Graph<T, Size, MaxEdges>::adjListToMat(bool matrix[Size][Size])
     {
         for (int j = 0; j < Size; j++)
         {
-            // if (vertices[i]->name != "")
-            // {
             if (inEdges(vertices[j]->name, vertices[i]->name))
             {
                 matrix[i][j] = true;
                 cout << vertices[j]->name << "-->" << vertices[i]->name << "(" << i << "," << j << ")" << endl;
             }
-            // cout << v->name << "-->" << v->Edges[i].v->name << endl;
             if (inEdges(vertices[i]->name, vertices[j]->name))
             {
                 matrix[j][i] = true;
                 cout << vertices[i]->name << "-->" << vertices[j]->name << "(" << j << "," << i << ")" << endl;
             }
-            // }
         }
     }
     // Display matrix
@@ -269,20 +265,16 @@ void Graph<T, Size, MaxEdges>::adjListToMat()
     {
         for (int j = 0; j < Size; j++)
         {
-            // if (vertices[i]->name != "")
-            // {
             if (inEdges(vertices[j]->name, vertices[i]->name))
             {
                 adjMatrix[i][j] = true;
                 cout << vertices[j]->name << "-->" << vertices[i]->name << "(" << i << "," << j << ")" << endl;
             }
-            // cout << v->name << "-->" << v->Edges[i].v->name << endl;
             if (inEdges(vertices[i]->name, vertices[j]->name))
             {
                 adjMatrix[j][i] = true;
                 cout << vertices[i]->name << "-->" << vertices[j]->name << "(" << j << "," << i << ")" << endl;
             }
-            // }
         }
     }
     // Display matrix

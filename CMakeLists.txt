@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
+
 # set project name and version
 project(Graphs VERSION 0.1)
 
@@ -7,6 +8,12 @@ project(Graphs VERSION 0.1)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_FLAGS -O0)
+
+# get boost
+find_package(Boost 1.71.0)
+if(Boost_FOUND)
+    include_directories(${Boost_INCLUDE_DIRS})
+endif()
 
 set(PROJECT_BINARY_DIR ${PROJECT_SOURCE_DIR}/build/bin)
 
@@ -23,9 +30,9 @@ add_executable(LargeTest ${PROJECT_SOURCE_DIR}/src/large-test.cpp)
 add_executable(Prims ${PROJECT_SOURCE_DIR}/src/testPrims.cpp)
 
 target_include_directories(Traversals PUBLIC ${PROJECT_SOURCE_DIR}/include)
-target_include_directories(GraphDisplay PUBLIC ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/boost_1_71_0 ${PROJECT_SOURCE_DIR}/graphviz)
+target_include_directories(GraphDisplay PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_include_directories(AdjM PUBLIC ${PROJECT_SOURCE_DIR}/include)
 target_include_directories(DijSearch PUBLIC ${PROJECT_SOURCE_DIR}/include)
-target_include_directories(LargeTest PUBLIC ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/boost_1_71_0 ${PROJECT_SOURCE_DIR}/graphviz)
-target_include_directories(Prims PUBLIC ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/boost_1_71_0 ${PROJECT_SOURCE_DIR}/graphviz)
+target_include_directories(LargeTest PUBLIC ${PROJECT_SOURCE_DIR}/include)
+target_include_directories(Prims PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
