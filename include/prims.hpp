@@ -51,6 +51,7 @@ Graph<T, Size, MaxEdges> PrimsMST(const Graph<T, Size, MaxEdges> &g)
         return Graph<T, Size, MaxEdges>{};
     }
 
+    // Some names are being erased
     auto vertices = g.getVertices();
 
     std::array<std::shared_ptr<vertex<T, MaxEdges>>, Size>

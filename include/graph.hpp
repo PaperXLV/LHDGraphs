@@ -35,7 +35,7 @@ struct vertex
                distDijk{0},
                dijkParent{nullptr} {};
 
-    std::string_view name;
+    std::string name;
     bool visited;
     int currentEdges;
     std::array<Edge<T, MaxEdges>, MaxEdges> Edges; //stores edges to adjacent vertices
@@ -57,7 +57,7 @@ public:
     Graph();
     ~Graph() = default;
 
-    void addVertex(std::string_view name);
+    void addVertex(std::string name);
     void addEdge(std::string_view name1, std::string_view name2, T distance);
     bool inEdges(std::string_view source, std::string_view target);
     void displayEdges();
@@ -98,7 +98,7 @@ Graph<T, Size, MaxEdges>::Graph() : adjMatrix{}
         - Takes in the name (string) of the city to be added
 */
 template <typename T, size_t Size, size_t MaxEdges>
-void Graph<T, Size, MaxEdges>::addVertex(std::string_view cityName)
+void Graph<T, Size, MaxEdges>::addVertex(std::string cityName)
 {
     vertex<T, MaxEdges> v1;
     v1.name = cityName;
