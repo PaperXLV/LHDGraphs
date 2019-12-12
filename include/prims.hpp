@@ -7,7 +7,7 @@ Graph<T, Size, MaxEdges> PrimsMST(const Graph<T, Size, MaxEdges> &g)
 {
     const int vertexCount = g.getCurrentVertices();
 
-    auto getVertexIndex = [&](const vertex<T, MaxEdges> &v, const std::array<vertex<T, MaxEdges>, Size> &a) {
+    auto getVertexIndex = [&](const std::shared_ptr<vertex<T, MaxEdges>> &v, const std::array<std::shared_ptr<vertex<T, MaxEdges>>, Size> &a) {
         for (int i = 0; i < vertexCount; ++i)
         {
             if (a.at(i) == v)
@@ -18,15 +18,15 @@ Graph<T, Size, MaxEdges> PrimsMST(const Graph<T, Size, MaxEdges> &g)
         return -1;
     };
 
-    auto addVertexToMST = [&](const vertex<T, MaxEdges> &v,
-                              std::array<vertex<T, MaxEdges>, Size> &includedVertices,
-                              const std::array<vertex<T, MaxEdges>, Size> &vertices,
+    auto addVertexToMST = [&](const std::shared_ptr<vertex<T, MaxEdges>> &v,
+                              std::array<std::shared_ptr<vertex<T, MaxEdges>>, Size> &includedVertices,
+                              const std::array<std::shared_ptr<vertex<T, MaxEdges>>, Size> &vertices,
                               std::array<T, Size> &edges) {
-        for (int i = 0; i < v.currentEdges; ++i)
+        for (int i = 0; i < v->currentEdges; ++i)
         {
-            if (int index = getVertexIndex(*v.Edges[i].v, vertices); index >= 0)
+            if (int index = getVertexIndex(v->Edges[i].v, vertices); index >= 0)
             {
-                edges[index] = std::min(v.Edges[i].distance, edges[index]);
+                edges[index] = std::min(v->Edges[i].distance, edges[index]);
             }
         }
         if (int index = getVertexIndex(v, vertices); index >= 0)
@@ -43,7 +43,7 @@ Graph<T, Size, MaxEdges> PrimsMST(const Graph<T, Size, MaxEdges> &g)
 
     auto vertices = g.getVertices();
 
-    std::array<vertex<T, MaxEdges>, Size>
+    std::array<std::shared_ptr<vertex<T, MaxEdges>>, Size>
         includedVertices{};
 
     // Initialize array of current max edge weights to determine when to add edges

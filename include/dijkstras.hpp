@@ -8,17 +8,17 @@
           with appropriate distance set
 */
 template <typename T, size_t Size, size_t MaxEdges>
-vertex<T, MaxEdges> *Graph<T, Size, MaxEdges>::dijkstraSearch(std::string start, std::string end)
+std::shared_ptr<vertex<T, MaxEdges>> Graph<T, Size, MaxEdges>::dijkstraSearch(std::string start, std::string end)
 {
     using namespace std;
     setAllVerticesUnvisited();
-    vertex<T, MaxEdges> *vStart = findVertex(start);
+    shared_ptr<vertex<T, MaxEdges>> vStart = findVertex(start);
     if (!vStart)
     {
         cout << "Start city not found" << endl;
         return nullptr;
     }
-    vertex<T, MaxEdges> *vEnd = findVertex(end);
+    shared_ptr<vertex<T, MaxEdges>> vEnd = findVertex(end);
     if (!vEnd)
     {
         cout << "Destination city not found" << endl;
@@ -28,7 +28,7 @@ vertex<T, MaxEdges> *Graph<T, Size, MaxEdges>::dijkstraSearch(std::string start,
 
     // Create a list to store solved vertices
     // and append vStart
-    array<vertex<T, MaxEdges> *, MaxEdges> solvedList;
+    array<shared_ptr<vertex<T, MaxEdges>>, MaxEdges> solvedList;
     int currentIndex = 0;
     solvedList[currentIndex++] = vStart;
 
@@ -36,12 +36,12 @@ vertex<T, MaxEdges> *Graph<T, Size, MaxEdges>::dijkstraSearch(std::string start,
     {
         int minDist = INT8_MAX;
         // pointer to keep track of solved node
-        vertex<T, MaxEdges> *solvedV = nullptr;
+        shared_ptr<vertex<T, MaxEdges>> solvedV = nullptr;
 
         // iterater across list of solved vertices
         for (int i = 0; i < currentIndex; i++)
         {
-            vertex<T, MaxEdges> *s = solvedList[i];
+            shared_ptr<vertex<T, MaxEdges>> s = solvedList[i];
             // now iterate s's adjacency list
 
             for (int j = 0; j < s->currentEdges; j++)
@@ -84,8 +84,8 @@ template <typename T, size_t Size, size_t MaxEdges>
 void Graph<T, Size, MaxEdges>::dijkstraDisplay(std::string start, std::string end)
 {
     using namespace std;
-    vertex<T, MaxEdges> *vEnd = dijkstraSearch(start, end);
-    vertex<T, MaxEdges> *temp = vEnd;
+    shared_ptr<vertex<T, MaxEdges>> vEnd = dijkstraSearch(start, end);
+    shared_ptr<vertex<T, MaxEdges>> temp = vEnd;
     while (temp != nullptr)
     {
         cout << temp->name << endl;

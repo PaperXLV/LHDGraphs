@@ -31,10 +31,10 @@ void makeGraph(Graph<T, Size, MaxEdges> g)
     // get vector names and number of total edges
     for (int i = 0; i < Size; i++)
     {
-        std::string convert = std::string(verticies[i].name.data(), verticies[i].name.size());
+        std::string convert = std::string(verticies[i]->name.data(), verticies[i]->name.size());
         names[i] = convert;
 
-        maxEdges += verticies[i].currentEdges;
+        maxEdges += verticies[i]->currentEdges;
     }
     typedef std::pair<int, int> vertexEdge;
     // array of edges to be made in dot file
@@ -43,10 +43,10 @@ void makeGraph(Graph<T, Size, MaxEdges> g)
     int usedByLocation = 0;
     for (int i = 0; i < Size; i++)
     {
-        for (int j = 0; j < verticies[i].currentEdges; j++)
+        for (int j = 0; j < verticies[i]->currentEdges; j++)
         {
             //get the edge arrays for vector
-            Edge newEdge = verticies[i].Edges[j];
+            Edge newEdge = verticies[i]->Edges[j];
             int edgeNumber = -1;
             for (int t = 0; t < Size; t++)
             {

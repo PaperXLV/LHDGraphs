@@ -46,7 +46,7 @@ int main()
             {
                 if (j != i)
                 {
-                    g.addEdge(line[0], g.getVertices()[i].name, stof(line[i]));
+                    g.addEdge(line[0], g.getVertices()[i]->name, stof(line[i]));
                 }
             }
         }
