@@ -5,6 +5,8 @@
 template <typename T, size_t Size, size_t MaxEdges>
 Graph<T, Size, MaxEdges> PrimsMST(const Graph<T, Size, MaxEdges> &g)
 {
+    Graph<T, Size, MaxEdges> ret{};
+
     const int vertexCount = g.getCurrentVertices();
 
     auto getVertexIndex = [&](const std::shared_ptr<vertex<T, MaxEdges>> &v, const std::array<std::shared_ptr<vertex<T, MaxEdges>>, Size> &a) {
@@ -22,11 +24,16 @@ Graph<T, Size, MaxEdges> PrimsMST(const Graph<T, Size, MaxEdges> &g)
     auto addVertexToMST = [&](const std::shared_ptr<vertex<T, MaxEdges>> &v,
                               std::array<std::shared_ptr<vertex<T, MaxEdges>>, Size> &includedVertices,
                               const std::array<std::shared_ptr<vertex<T, MaxEdges>>, Size> &vertices,
-                              std::array<T, Size> &edges) {
+                              std::array<T, Size> &edges, std::array<std::shared_ptr<vertex<T, MaxEdges>>, Size> &edgeParents) {
         for (int i = 0; i < v->currentEdges; ++i)
         {
             if (int index = getVertexIndex(v->Edges[i].v, vertices); index >= 0)
             {
+                if (v->Edges[i].distance < edges[index])
+                {
+                    edges[index] = v->Edges[i].distance;
+                    edgeParents[index] = v;
+                }
                 edges[index] = std::min(v->Edges[i].distance, edges[index]);
             }
         }
@@ -36,27 +43,24 @@ Graph<T, Size, MaxEdges> PrimsMST(const Graph<T, Size, MaxEdges> &g)
         }
     };
 
-    auto outputEdges = [&](std::array<T, Size> &edges) {
-        std::cout << "Edges: \n";
-        for (const T edge : edges)
-        {
-            std::cout << edge << " ";
-        }
-        std::cout << "\n";
-    };
-
     if (vertexCount <= 0)
     {
-        // Probably need some other default return;
-        return Graph<T, Size, MaxEdges>{};
+        return ret;
     }
 
     // Some names are being erased
     auto vertices = g.getVertices();
+    for (const auto &v : vertices)
+    {
+        ret.addVertex(v->name);
+    }
 
     std::array<std::shared_ptr<vertex<T, MaxEdges>>, Size>
         includedVertices{};
 
+    std::array<std::shared_ptr<vertex<T, MaxEdges>>, Size> edgeParents{};
+
+    std::array<std::unique_ptr<Edge<T, MaxEdges>>, Size - 1> includedEdges{};
     // Initialize array of current max edge weights to determine when to add edges
     std::array<T, Size> cutEdge{};
     for (T &weight : cutEdge)
@@ -72,9 +76,7 @@ Graph<T, Size, MaxEdges> PrimsMST(const Graph<T, Size, MaxEdges> &g)
     cutEdge[0] = 0;
     int currentIncluded = 1;
     included[0] = true;
-
-    addVertexToMST(vertices[0], includedVertices, vertices, cutEdge);
-    outputEdges(cutEdge);
+    addVertexToMST(vertices[0], includedVertices, vertices, cutEdge, edgeParents);
 
     for (; currentIncluded < vertexCount; ++currentIncluded)
     {
@@ -91,10 +93,8 @@ Graph<T, Size, MaxEdges> PrimsMST(const Graph<T, Size, MaxEdges> &g)
         }
         if (index >= 0)
         {
-            std::cout << "Adding " << vertices[index]->name << "\n";
-            addVertexToMST(vertices[index], includedVertices, vertices, cutEdge);
-            outputEdges(cutEdge);
-
+            addVertexToMST(vertices[index], includedVertices, vertices, cutEdge, edgeParents);
+            ret.addEdge(edgeParents[index]->name, vertices[index]->name, cutEdge[index]);
             included[index] = true;
         }
         else
@@ -104,5 +104,5 @@ Graph<T, Size, MaxEdges> PrimsMST(const Graph<T, Size, MaxEdges> &g)
         }
     }
 
-    return Graph<T, Size, MaxEdges>{};
+    return ret;
 }

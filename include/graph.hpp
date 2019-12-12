@@ -60,6 +60,7 @@ public:
     void addVertex(std::string name);
     void addEdge(std::string_view name1, std::string_view name2, T distance);
     bool inEdges(std::string_view source, std::string_view target);
+
     void displayEdges();
     const std::array<std::shared_ptr<vertex<T, MaxEdges>>, Size> &getVertices() const;
     int getCurrentVertices() const;

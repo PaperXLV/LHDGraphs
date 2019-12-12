@@ -64,7 +64,6 @@ Graph<T, Size, MaxEdges> constructLargeGraph(std::string filepath = "")
 
         for (const auto &line : graphData)
         {
-            std::cout << "adding vertex: " << line[0] << "\n";
             g.addVertex(line[0]);
         }
         for (int j = 0; j < graphData.size(); j++)
@@ -91,6 +90,6 @@ int main()
 {
     //Graph<int, 6, 3> g2 = PrimsMST(generateGraph<int, 6, 3>());
     Graph<float, 30, 29> g = PrimsMST(constructLargeGraph<float, 30, 29>());
-
+    makeGraph<float, 30, 29>(g);
     return 0;
 }
