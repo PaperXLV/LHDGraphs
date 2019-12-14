@@ -42,12 +42,6 @@ struct vertex
     bool visited{false};
     int currentEdges{0};
     std::array<Edge<T, MaxEdges>, MaxEdges> Edges{}; //stores edges to adjacent vertices
-
-    // distDijk for weighted distance from starting vertex
-    T distDijk{0};
-    std::weak_ptr<vertex<T, MaxEdges>> dijkParent{}; //stores edges to adjacent vertices
-    // solved member for Dijkstra's
-    bool solved{false};
 };
 
 /* 
@@ -70,20 +64,17 @@ public:
 
     void displayEdges();
     const std::array<std::shared_ptr<vertex<T, MaxEdges>>, Size> &getVertices() const;
+    const std::weak_ptr<vertex<T, MaxEdges>> findVertex(std::string_view name) const;
     int getCurrentVertices() const;
     void setAllVerticesUnvisited();
     void adjListToMat(bool matrix[Size][Size]);
     void adjListToMat();
-    std::weak_ptr<vertex<T, MaxEdges>> dijkstraSearch(std::string start, std::string end);
-    void dijkstraDisplay(std::string start, std::string end);
 
 private:
     std::array<std::shared_ptr<vertex<T, MaxEdges>>, Size> vertices{}; //stores vertices
     int currentVertices{0};
 
     std::array<std::array<bool, Size>, Size> adjMatrix{};
-
-    const std::weak_ptr<vertex<T, MaxEdges>> findVertex(std::string_view name);
 };
 
 /*
@@ -133,7 +124,7 @@ void Graph<T, Size, MaxEdges>::addEdge(std::string_view city1, std::string_view 
         - returns nullptr if not found
 */
 template <typename T, size_t Size, size_t MaxEdges>
-const std::weak_ptr<vertex<T, MaxEdges>> Graph<T, Size, MaxEdges>::findVertex(std::string_view name)
+const std::weak_ptr<vertex<T, MaxEdges>> Graph<T, Size, MaxEdges>::findVertex(std::string_view name) const
 {
     std::shared_ptr<vertex<T, MaxEdges>> found{};
     for (int i = 0; i < vertices.size(); ++i)

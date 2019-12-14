@@ -23,7 +23,7 @@ int main()
 
     // long edge, shouldn't take this path
     g.addEdge("Boulder", "Las Vegas", 100);
-    g.dijkstraDisplay("Boulder", "Las Vegas");
+    dijkstraDisplay(g, "Boulder");
 
     return 0;
 }

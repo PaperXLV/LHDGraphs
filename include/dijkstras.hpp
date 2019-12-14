@@ -1,96 +1,128 @@
 #include "graph.hpp"
 
+// MOVING DIJKSTRAS. BROKEN PARENT
+
+template <typename T, size_t MaxEdges>
+struct DijkData
+{
+    DijkData() = default;
+    DijkData(const DijkData &) = default;
+    DijkData(DijkData &&) = default;
+    DijkData &operator=(const DijkData &) = default;
+    DijkData &operator=(DijkData &&) = default;
+    ~DijkData() = default;
+
+    T distance{0};
+    std::shared_ptr<vertex<T, MaxEdges>> self{};
+    std::shared_ptr<DijkData<T, MaxEdges>> parent{}; //stores edges to adjacent vertices
+    bool solved{false};
+};
+
 /*
     Dijkstrs's algorithm
         - start is starting city name (string)
-        - end is ending city name (string)
         - returns pointer to ending vertex
           with appropriate distance set
 */
 template <typename T, size_t Size, size_t MaxEdges>
-std::weak_ptr<vertex<T, MaxEdges>> Graph<T, Size, MaxEdges>::dijkstraSearch(std::string start, std::string end)
+std::array<std::shared_ptr<DijkData<T, MaxEdges>>, Size> dijkstraSearch(const Graph<T, Size, MaxEdges> &g, std::string start)
 {
     using namespace std;
-    setAllVerticesUnvisited();
-    shared_ptr<vertex<T, MaxEdges>> vStart = findVertex(start).lock();
+    DijkData<T, MaxEdges> dStart{};
+    shared_ptr<vertex<T, MaxEdges>> vStart = g.findVertex(start).lock();
+    array<shared_ptr<DijkData<T, MaxEdges>>, Size> solvedList{};
+
     if (!vStart)
     {
         cout << "Start city not found" << endl;
-        return std::weak_ptr<vertex<T, MaxEdges>>{};
+        return solvedList;
     }
-    shared_ptr<vertex<T, MaxEdges>> vEnd = findVertex(end).lock();
-    if (!vEnd)
-    {
-        cout << "Destination city not found" << endl;
-        return std::weak_ptr<vertex<T, MaxEdges>>{};
-    }
-    vStart->solved = true;
+    dStart.self = move(vStart);
+
+    dStart.solved = true;
 
     // Create a list to store solved vertices
     // and append vStart
-    array<shared_ptr<vertex<T, MaxEdges>>, MaxEdges> solvedList;
-    int currentIndex = 0;
-    solvedList[currentIndex++] = vStart;
+    for (auto &ptr : solvedList)
+    {
+        ptr = make_shared<DijkData<T, MaxEdges>>(DijkData<T, MaxEdges>{});
+    }
 
-    while (!vEnd->solved)
+    int currentIndex = 0;
+    solvedList[currentIndex++] = make_shared<DijkData<T, MaxEdges>>(dStart);
+
+    auto checkSolved = [&](const shared_ptr<vertex<T, MaxEdges>> &v) -> bool {
+        for (int i = 0; i < currentIndex; ++i)
+        {
+            if (v == solvedList[i]->self && solvedList[i]->solved)
+            {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    cout << "initialized\n";
+
+    for (int x = 1; x < Size; x++)
     {
         int minDist = INT8_MAX;
-        // pointer to keep track of solved node
-        shared_ptr<vertex<T, MaxEdges>> solvedV = nullptr;
+        // data to keep track of solved node
+        shared_ptr<DijkData<T, MaxEdges>> solvedD = solvedList[currentIndex];
 
         // iterater across list of solved vertices
         for (int i = 0; i < currentIndex; i++)
         {
-            shared_ptr<vertex<T, MaxEdges>> s = solvedList[i];
+            shared_ptr<DijkData<T, MaxEdges>> data = solvedList[i];
             // now iterate s's adjacency list
 
-            for (int j = 0; j < s->currentEdges; j++)
+            for (int j = 0; j < data->self->currentEdges; j++)
             {
-                if (!s->Edges[j].v.expired())
+                if (!data->self->Edges[j].v.expired())
                 {
-                    shared_ptr<vertex<T, MaxEdges>> v = s->Edges[j].v.lock();
-                    if (!v->solved)
+                    shared_ptr<vertex<T, MaxEdges>> v = data->self->Edges[j].v.lock();
+                    if (!checkSolved(v))
                     {
                         //calculate the weight from vSTart
-                        int dist = s->distDijk + s->Edges[j].weight;
+                        int dist = data->distance + data->self->Edges[j].weight;
                         // check if the weight is less than smallest weight thusfar
                         if (dist < minDist)
                         {
-                            solvedV = v;
+                            solvedD->self = v;
                             minDist = dist;
                             //if you had parent ptr, update it here
-                            solvedV->dijkParent = s;
+                            solvedD->parent = solvedList[i];
                         }
                     }
                 }
             }
         }
 
-        solvedV->distDijk = minDist;
-        // solvedV->parent
-        solvedV->solved = true;
-        solvedList[currentIndex++] = solvedV;
-        // cout << solvedV->name << endl;
+        solvedD->distance = minDist;
+        solvedD->solved = true;
+        solvedList[currentIndex++] = solvedD;
+
+        for (int i = 0; i < currentIndex; i++)
+        {
+            cout << solvedList[i]->self->name << ":" << solvedList[i]->distance << ":" << solvedList[i]->parent->self->name << "\n";
+        }
+        cout << currentIndex << "\n";
     }
-    return vEnd;
+    return solvedList;
 }
 
 /*
     Print Dijkstrs's path 
         - start is starting city name (string)
-        - end is ending city name (string)
         - prints min distance path
 */
 template <typename T, size_t Size, size_t MaxEdges>
-void Graph<T, Size, MaxEdges>::dijkstraDisplay(std::string start, std::string end)
+void dijkstraDisplay(const Graph<T, Size, MaxEdges> &g, std::string start)
 {
     using namespace std;
-    shared_ptr<vertex<T, MaxEdges>> vEnd = dijkstraSearch(start, end).lock();
-    shared_ptr<vertex<T, MaxEdges>> temp = vEnd;
-    while (temp != nullptr)
+    array<shared_ptr<DijkData<T, MaxEdges>>, Size> dijk = dijkstraSearch(g, start);
+    for (int i = 0; i < Size; ++i)
     {
-        cout << temp->name << endl;
-        temp = temp->dijkParent.lock();
+        cout << dijk[i]->self->name << ":" << dijk[i]->distance << "\n";
     }
-    cout << "Total Distance: " << vEnd->distDijk << endl;
 }
