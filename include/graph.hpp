@@ -108,11 +108,11 @@ void Graph<T, Size, MaxEdges>::addVertex(std::string cityName)
 template <typename T, size_t Size, size_t MaxEdges>
 void Graph<T, Size, MaxEdges>::addEdge(std::string_view city1, std::string_view city2, T weight)
 {
-    for (int i = 0; i < vertices.size(); i++)
+    for (int i = 0; i < vertices.size(); ++i)
     {
         if (vertices[i]->name == city1)
         {
-            for (int j = 0; j < vertices.size(); j++)
+            for (int j = 0; j < vertices.size(); ++j)
             {
                 if (vertices[j]->name == city2 && j != i)
                 {
@@ -136,7 +136,7 @@ template <typename T, size_t Size, size_t MaxEdges>
 const std::weak_ptr<vertex<T, MaxEdges>> Graph<T, Size, MaxEdges>::findVertex(std::string_view name)
 {
     std::shared_ptr<vertex<T, MaxEdges>> found{};
-    for (int i = 0; i < vertices.size(); i++)
+    for (int i = 0; i < vertices.size(); ++i)
     {
         if (vertices[i]->name == name)
         {
@@ -154,10 +154,10 @@ const std::weak_ptr<vertex<T, MaxEdges>> Graph<T, Size, MaxEdges>::findVertex(st
 template <typename T, size_t Size, size_t MaxEdges>
 void Graph<T, Size, MaxEdges>::displayEdges()
 {
-    for (int i = 0; i < vertices.size(); i++)
+    for (int i = 0; i < vertices.size(); ++i)
     {
         std::cout << vertices[i]->name << "-->";
-        for (int j = 0; j < vertices[i]->currentEdges; j++)
+        for (int j = 0; j < vertices[i]->currentEdges; ++j)
         {
             if (j < vertices[i]->currentEdges - 1)
             {
@@ -211,7 +211,7 @@ int Graph<T, Size, MaxEdges>::getCurrentVertices() const
 template <typename T, size_t Size, size_t MaxEdges>
 void Graph<T, Size, MaxEdges>::setAllVerticesUnvisited()
 {
-    for (int i = 0; i < vertices.size(); i++)
+    for (int i = 0; i < vertices.size(); ++i)
     {
         vertices[i]->visited = false;
     }
@@ -222,9 +222,9 @@ template <typename T, size_t Size, size_t MaxEdges>
 void Graph<T, Size, MaxEdges>::adjListToMat(bool matrix[Size][Size])
 {
     using namespace std;
-    for (int i = 0; i < Size; i++)
+    for (int i = 0; i < Size; ++i)
     {
-        for (int j = 0; j < Size; j++)
+        for (int j = 0; j < Size; ++j)
         {
             if (inEdges(vertices[j]->name, vertices[i]->name))
             {
@@ -239,9 +239,9 @@ void Graph<T, Size, MaxEdges>::adjListToMat(bool matrix[Size][Size])
         }
     }
     // Display matrix
-    for (int i = 0; i < Size; i++)
+    for (int i = 0; i < Size; ++i)
     {
-        for (int j = 0; j < Size; j++)
+        for (int j = 0; j < Size; ++j)
         {
             cout << matrix[i][j] << "  ";
         }
@@ -254,9 +254,9 @@ template <typename T, size_t Size, size_t MaxEdges>
 void Graph<T, Size, MaxEdges>::adjListToMat()
 {
     using namespace std;
-    for (int i = 0; i < Size; i++)
+    for (int i = 0; i < Size; ++i)
     {
-        for (int j = 0; j < Size; j++)
+        for (int j = 0; j < Size; ++j)
         {
             if (inEdges(vertices[j]->name, vertices[i]->name))
             {
@@ -271,9 +271,9 @@ void Graph<T, Size, MaxEdges>::adjListToMat()
         }
     }
     // Display matrix
-    for (int i = 0; i < Size; i++)
+    for (int i = 0; i < Size; ++i)
     {
-        for (int j = 0; j < Size; j++)
+        for (int j = 0; j < Size; ++j)
         {
             cout << adjMatrix[i][j] << "  ";
         }

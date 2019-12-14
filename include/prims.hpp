@@ -13,15 +13,16 @@ struct PrimData
     {
     }
 
-    PrimData() : parent{},
-                 weight{std::numeric_limits<T>::max()},
-                 included{false}
-    {
-    }
+    PrimData() = default;
+    PrimData(const PrimData &) = default;
+    PrimData(PrimData &&) = default;
+    PrimData &operator=(const PrimData &) = default;
+    PrimData &operator=(PrimData &&) = default;
+    ~PrimData() = default;
 
-    std::weak_ptr<vertex<T, MaxEdges>> parent;
-    T weight;
-    bool included;
+    std::weak_ptr<vertex<T, MaxEdges>> parent{};
+    T weight{std::numeric_limits<T>::max()};
+    bool included{false};
 };
 
 template <typename T, size_t Size, size_t MaxEdges>
