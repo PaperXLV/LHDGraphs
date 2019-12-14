@@ -70,7 +70,7 @@ void makeGraph(Graph<T, Size, MaxEdges> g)
     int weights[nedges];
     std::fill(weights, weights + nedges, 1);
     //define type of
-    typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::directedS,
+    typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS,
                                   boost::property<boost::vertex_color_t, boost::default_color_type>,
                                   boost::property<boost::edge_weight_t, int>>
         BoostGraph;

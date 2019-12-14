@@ -1,6 +1,7 @@
 #include "graph.hpp"
 #include <limits>
 #include <iostream>
+#include <queue>
 
 // Struct to hold necesary data for each vertex in the graph
 template <typename T, size_t MaxEdges>
@@ -49,9 +50,9 @@ Graph<T, Size, MaxEdges> PrimsMST(const Graph<T, Size, MaxEdges> &g)
         {
             if (int index = getVertexIndex(v->Edges[i].v.lock(), vertices); index >= 0)
             {
-                if (v->Edges[i].distance < primData[index].weight)
+                if (v->Edges[i].weight < primData[index].weight)
                 {
-                    primData[index].weight = v->Edges[i].distance;
+                    primData[index].weight = v->Edges[i].weight;
                     primData[index].parent = v;
                 }
             }
@@ -65,7 +66,8 @@ Graph<T, Size, MaxEdges> PrimsMST(const Graph<T, Size, MaxEdges> &g)
     }
 
     // Initialize Data
-    std::array<std::shared_ptr<vertex<T, MaxEdges>>, Size> vertices{g.getVertices()};
+    std::array<std::shared_ptr<vertex<T, MaxEdges>>, Size>
+        vertices{g.getVertices()};
     std::array<PrimData<T, MaxEdges>, Size> primData{};
 
     // Add first vertex to MST
@@ -85,14 +87,15 @@ Graph<T, Size, MaxEdges> PrimsMST(const Graph<T, Size, MaxEdges> &g)
         // Add smallest weight not already included
         T min = std::numeric_limits<T>::max();
         int index = -1;
-        for (int i = 0; i < vertexCount; ++i)
+        for (int j = 0; j < vertexCount; ++j)
         {
-            if (primData[i].weight < min && !primData[i].included)
+            if (primData[j].weight < min && !primData[j].included)
             {
-                min = primData[i].weight;
-                index = i;
+                min = primData[j].weight;
+                index = j;
             }
         }
+        // Insert vertex[index] into the MST, add relevent edge to return graph
         if (index >= 0)
         {
             addVertexToMST(vertices[index], vertices, primData);
@@ -101,8 +104,7 @@ Graph<T, Size, MaxEdges> PrimsMST(const Graph<T, Size, MaxEdges> &g)
         }
         else
         {
-            std::cout << "No edge found"
-                      << "\n";
+            std::cout << "No edge found\n";
         }
     }
 

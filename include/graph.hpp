@@ -16,35 +16,38 @@ vertex in the graph. */
 template <typename T, size_t MaxEdges>
 struct Edge
 {
-    Edge() : v{},
-             distance{0} {};
-    std::weak_ptr<vertex<T, MaxEdges>> v;
-    // distance of the single edge
-    T distance;
+    Edge() = default;
+    Edge(const Edge &) = default;
+    Edge(Edge &&) = default;
+    Edge &operator=(const Edge &) = default;
+    Edge &operator=(Edge &&) = default;
+    ~Edge() = default;
+
+    std::weak_ptr<vertex<T, MaxEdges>> v{};
+    T weight{0};
 };
 
 /*this is the struct for each vertex in the graph. */
 template <typename T, size_t MaxEdges>
 struct vertex
 {
-    vertex() : Edges{},
-               visited{false},
-               name{""},
-               currentEdges{0},
-               solved{false},
-               distDijk{0},
-               dijkParent{} {};
+    vertex() = default;
+    vertex(const vertex &) = default;
+    vertex(vertex &&) = default;
+    vertex &operator=(const vertex &) = default;
+    vertex &operator=(vertex &&) = default;
+    ~vertex() = default;
 
-    std::string name;
-    bool visited;
-    int currentEdges;
-    std::array<Edge<T, MaxEdges>, MaxEdges> Edges; //stores edges to adjacent vertices
+    std::string name{""};
+    bool visited{false};
+    int currentEdges{0};
+    std::array<Edge<T, MaxEdges>, MaxEdges> Edges{}; //stores edges to adjacent vertices
 
     // distDijk for weighted distance from starting vertex
-    T distDijk;
-    std::weak_ptr<vertex<T, MaxEdges>> dijkParent; //stores edges to adjacent vertices
+    T distDijk{0};
+    std::weak_ptr<vertex<T, MaxEdges>> dijkParent{}; //stores edges to adjacent vertices
     // solved member for Dijkstra's
-    bool solved;
+    bool solved{false};
 };
 
 /* 
@@ -54,11 +57,15 @@ template <typename T, size_t Size, size_t MaxEdges>
 class Graph
 {
 public:
-    Graph();
+    Graph() = default;
+    Graph(const Graph &) = default;
+    Graph(Graph &&) = default;
+    Graph &operator=(const Graph &) = default;
+    Graph &operator=(Graph &&) = default;
     ~Graph() = default;
 
     void addVertex(std::string name);
-    void addEdge(std::string_view name1, std::string_view name2, T distance);
+    void addEdge(std::string_view name1, std::string_view name2, T weight);
     bool inEdges(std::string_view source, std::string_view target);
 
     void displayEdges();
@@ -71,28 +78,13 @@ public:
     void dijkstraDisplay(std::string start, std::string end);
 
 private:
-    std::array<std::shared_ptr<vertex<T, MaxEdges>>, Size> vertices; //stores vertices
+    std::array<std::shared_ptr<vertex<T, MaxEdges>>, Size> vertices{}; //stores vertices
     int currentVertices{0};
 
-    std::array<std::array<bool, Size>, Size> adjMatrix;
+    std::array<std::array<bool, Size>, Size> adjMatrix{};
 
     const std::weak_ptr<vertex<T, MaxEdges>> findVertex(std::string_view name);
 };
-
-/*
-    Graph constructor. Initializes its adjMatrix to zeros
-*/
-template <typename T, size_t Size, size_t MaxEdges>
-Graph<T, Size, MaxEdges>::Graph() : adjMatrix{}
-{
-    for (int i = 0; i < Size; i++)
-    {
-        for (int j = 0; j < Size; j++)
-        {
-            adjMatrix[i][j] = false;
-        }
-    }
-}
 
 /*
     Add a vertex to the graph
@@ -111,10 +103,10 @@ void Graph<T, Size, MaxEdges>::addVertex(std::string cityName)
     Add an edge between two verticies
         - city 2 will be added to city1's adjacency list
         - will only add in a single direction
-        - distance is the weight of the Edge between the verticies
+        - weight is the weight of the Edge between the verticies
 */
 template <typename T, size_t Size, size_t MaxEdges>
-void Graph<T, Size, MaxEdges>::addEdge(std::string_view city1, std::string_view city2, T distance)
+void Graph<T, Size, MaxEdges>::addEdge(std::string_view city1, std::string_view city2, T weight)
 {
     for (int i = 0; i < vertices.size(); i++)
     {
@@ -126,7 +118,7 @@ void Graph<T, Size, MaxEdges>::addEdge(std::string_view city1, std::string_view 
                 {
                     Edge<T, MaxEdges> e0;
                     e0.v = vertices[j];
-                    e0.distance = distance;
+                    e0.weight = weight;
                     vertices[i]->Edges[vertices[i]->currentEdges] = e0;
                     vertices[i]->currentEdges++;
                 }
@@ -169,11 +161,11 @@ void Graph<T, Size, MaxEdges>::displayEdges()
         {
             if (j < vertices[i]->currentEdges - 1)
             {
-                std::cout << vertices[i]->Edges[j].v->name << " (" << vertices[i]->Edges[j].distance << " miles)***";
+                std::cout << vertices[i]->Edges[j].v->name << " (" << vertices[i]->Edges[j].weight << " miles)***";
             }
             else
             {
-                std::cout << vertices[i]->Edges[j].v->name << " (" << vertices[i]->Edges[j].distance << " miles)";
+                std::cout << vertices[i]->Edges[j].v->name << " (" << vertices[i]->Edges[j].weight << " miles)";
             }
         }
         std::cout << std::endl;

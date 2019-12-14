@@ -51,9 +51,9 @@ std::weak_ptr<vertex<T, MaxEdges>> Graph<T, Size, MaxEdges>::dijkstraSearch(std:
                     shared_ptr<vertex<T, MaxEdges>> v = s->Edges[j].v.lock();
                     if (!v->solved)
                     {
-                        //calculate the distance from vSTart
-                        int dist = s->distDijk + s->Edges[j].distance;
-                        // check if the distance is less than smallest distance thusfar
+                        //calculate the weight from vSTart
+                        int dist = s->distDijk + s->Edges[j].weight;
+                        // check if the weight is less than smallest weight thusfar
                         if (dist < minDist)
                         {
                             solvedV = v;
