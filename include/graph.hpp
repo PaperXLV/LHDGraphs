@@ -352,4 +352,28 @@ constexpr bool operator<(const std::shared_ptr<vertex<T>> &ob1, const std::strin
     return ob1->name < ob2;
 }
 
+template <typename T>
+constexpr bool operator==(const std::shared_ptr<vertex<T>> &ob1, const std::shared_ptr<vertex<T>> &ob2)
+{
+    return ob1->name == ob2->name;
+}
+
+template <typename T>
+constexpr bool operator!=(const std::shared_ptr<vertex<T>> &ob1, const std::shared_ptr<vertex<T>> &ob2)
+{
+    return !(ob1->name == ob2->name);
+}
+
+template <typename T>
+constexpr bool operator>(const std::shared_ptr<vertex<T>> &ob1, const std::shared_ptr<vertex<T>> &ob2)
+{
+    return ob1->name > ob2->name;
+}
+
+template <typename T>
+constexpr bool operator<(const std::shared_ptr<vertex<T>> &ob1, const std::shared_ptr<vertex<T>> &ob2)
+{
+    return ob1->name < ob2->name;
+}
+
 #endif // GRAPH_HPP

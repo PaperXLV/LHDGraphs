@@ -112,6 +112,7 @@ Graph<T> PrimsMST(const Graph<T> &g)
     {
         ret.addVertex(v->name);
     }
+
     ret.sortVertices();
 
     while (!pq.empty())
