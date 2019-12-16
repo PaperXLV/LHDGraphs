@@ -7,9 +7,9 @@
 template <typename T>
 struct PrimData
 {
-    PrimData(std::weak_ptr<vertex<T>> p, T w, bool i) : parent{p},
-                                                        weight{w},
-                                                        included{i}
+    PrimData(std::shared_ptr<vertex<T>> s, std::shared_ptr<vertex<T>> p, T w) : parent{p},
+                                                                                self{s},
+                                                                                weight{w}
     {
     }
 
@@ -20,17 +20,41 @@ struct PrimData
     PrimData &operator=(PrimData &&) = default;
     ~PrimData() = default;
 
-    std::weak_ptr<vertex<T>> parent{};
+    std::shared_ptr<vertex<T>> parent{};
+    std::shared_ptr<vertex<T>> self{};
     T weight{std::numeric_limits<T>::max()};
-    bool included{false};
 };
+
+template <typename T>
+bool operator>(const PrimData<T> &lhs, const PrimData<T> &rhs)
+{
+    return lhs.weight > rhs.weight;
+}
+
+template <typename T>
+bool operator<(const PrimData<T> &lhs, const PrimData<T> &rhs)
+{
+    return lhs.weight < rhs.weight;
+}
+
+template <typename T>
+bool operator==(const PrimData<T> &lhs, const PrimData<T> &rhs)
+{
+    return lhs.weight == rhs.weight;
+}
+
+template <typename T>
+bool operator!=(const PrimData<T> &lhs, const PrimData<T> &rhs)
+{
+    return !(lhs.weight == rhs.weight);
+}
 
 template <typename T>
 Graph<T> PrimsMST(const Graph<T> &g)
 {
     Graph<T> ret{};
     const int vertexCount = g.getCurrentVertices();
-
+    /*
     // Helper function to retrieve the index of a vertex v in the vector a
     auto getVertexIndex = [&](const std::shared_ptr<vertex<T>> &v, const std::vector<std::shared_ptr<vertex<T>>> &a) -> int {
         for (int i = 0; i < vertexCount; ++i)
@@ -47,14 +71,47 @@ Graph<T> PrimsMST(const Graph<T> &g)
     auto addVertexToMST = [&](const std::shared_ptr<vertex<T>> &v,
                               const std::vector<std::shared_ptr<vertex<T>>> &vertices,
                               std::vector<PrimData<T>> &primData) -> void {
-        for (int i = 0; i < v->Edges.size(); ++i)
+        if (int index = getVertexIndex(v->Edges[i].v.lock(), vertices); index >= 0)
         {
-            if (int index = getVertexIndex(v->Edges[i].v.lock(), vertices); index >= 0)
+            if (v->Edges[i].weight < primData[index].weight)
             {
-                if (v->Edges[i].weight < primData[index].weight)
+                primData[index].weight = v->Edges[i].weight;
+                primData[index].parent = v;
+            }
+        }
+    };
+    */
+    auto checkIncluded = [&](const std::shared_ptr<vertex<T>> &v, const std::vector<std::string> &included) {
+        for (const auto &inc : included)
+        {
+            if (v->name == inc)
+            {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    auto addFromPriorityQueue = [&](std::priority_queue<PrimData<T>, std::vector<PrimData<T>>, std::greater<PrimData<T>>> &pq, std::vector<std::string> &included) {
+        PrimData<T> top = pq.top();
+        pq.pop();
+
+        if (!checkIncluded(top.self, included))
+        {
+            included.push_back(top.self->name);
+            if (top.parent)
+            {
+                ret.addEdge(top.parent->name, top.self->name, top.weight);
+            }
+            for (const auto &edge : top.self->Edges)
+            {
+                if (!edge.v.expired())
                 {
-                    primData[index].weight = v->Edges[i].weight;
-                    primData[index].parent = v;
+                    auto v = edge.v.lock();
+                    if (!checkIncluded(v, included))
+                    {
+                        pq.push(PrimData<T>(v, top.self, edge.weight));
+                    }
                 }
             }
         }
@@ -76,10 +133,15 @@ Graph<T> PrimsMST(const Graph<T> &g)
         primData.emplace_back(PrimData<T>{});
     }
 
+    std::priority_queue<PrimData<T>, std::vector<PrimData<T>>, std::greater<PrimData<T>>> pq{};
+    std::vector<std::string> included{};
+    // RESERVE SIZE OF PRIORITY_QUEUE and INCLUDED
+    pq.push(PrimData<T>(vertices[0], std::shared_ptr<vertex<T>>{}, 0));
+
     // Add first vertex to MST
-    primData[0].weight = 0;
-    primData[0].included = true;
-    addVertexToMST(vertices[0], vertices, primData);
+    //primData[0].weight = 0;
+    //primData[0].included = true;
+    //addVertexToMST(vertices[0], vertices, primData);
 
     // Initialize return graph vertices
     for (const auto &v : vertices)
@@ -87,6 +149,11 @@ Graph<T> PrimsMST(const Graph<T> &g)
         ret.addVertex(v->name);
     }
 
+    while (!pq.empty())
+    {
+        addFromPriorityQueue(pq, included);
+    }
+    /*
     // Begin at 1 since first vertex is already included.
     for (int i = 1; i < vertexCount; ++i)
     {
@@ -113,6 +180,7 @@ Graph<T> PrimsMST(const Graph<T> &g)
             std::cout << "No edge found\n";
         }
     }
+    */
 
     return ret;
 }
