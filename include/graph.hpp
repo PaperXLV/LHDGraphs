@@ -233,8 +233,11 @@ void Graph<T>::setAllVerticesUnvisited()
 template <typename T>
 void Graph<T>::sortVertices()
 {
-    std::sort(vertices.begin(), vertices.end());
-    vertSorted = true;
+    if (!vertSorted)
+    {
+        std::sort(vertices.begin(), vertices.end());
+        vertSorted = true;
+    }
 }
 /*
 // User gives a destination matrix to store in

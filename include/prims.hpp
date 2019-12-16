@@ -8,9 +8,9 @@
 template <typename T>
 struct PrimData
 {
-    PrimData(std::shared_ptr<vertex<T>> s, std::shared_ptr<vertex<T>> p, T w) : parent{p},
-                                                                                self{s},
-                                                                                weight{w}
+    PrimData(std::shared_ptr<vertex<T>> s, std::weak_ptr<vertex<T>> p, T w) : parent{p},
+                                                                              self{s},
+                                                                              weight{w}
     {
     }
 
@@ -21,7 +21,7 @@ struct PrimData
     PrimData &operator=(PrimData &&) = default;
     ~PrimData() = default;
 
-    std::shared_ptr<vertex<T>> parent{};
+    std::weak_ptr<vertex<T>> parent{};
     std::shared_ptr<vertex<T>> self{};
     T weight{std::numeric_limits<T>::max()};
 };
@@ -71,9 +71,9 @@ Graph<T> PrimsMST(const Graph<T> &g)
         if (!checkIncluded(top.self, included))
         {
             insertSorted(included, top.self->name);
-            if (top.parent)
+            if (!top.parent.expired())
             {
-                ret.addEdge(top.parent->name, top.self->name, top.weight);
+                ret.addEdge(top.parent.lock()->name, top.self->name, top.weight);
             }
             for (const auto &edge : top.self->Edges)
             {
@@ -112,6 +112,7 @@ Graph<T> PrimsMST(const Graph<T> &g)
     {
         ret.addVertex(v->name);
     }
+    ret.sortVertices();
 
     while (!pq.empty())
     {
