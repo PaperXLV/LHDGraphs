@@ -3,15 +3,14 @@
 #include <string>
 
 constexpr int Nodes{1000};
-constexpr int Edges{300};
 
-template <typename T, size_t Size, size_t MaxEdges>
-Graph<T, Size, MaxEdges> generateGraph()
+template <typename T, size_t Size>
+Graph<T, Size> generateGraph()
 {
     std::ifstream f{"../geom.csv"};
     std::string temp;
 
-    Graph<T, Size, MaxEdges> g{};
+    Graph<T, Size> g{};
     if (f.is_open())
     {
         std::cout << "opened\n";
@@ -33,14 +32,14 @@ Graph<T, Size, MaxEdges> generateGraph()
     else
     {
         std::cout << "unable to open file";
-        return Graph<T, Size, MaxEdges>{};
+        return Graph<T, Size>{};
     }
     f.close();
     std::cout << "graph created\n";
-    return Graph<T, Size, MaxEdges>{};
+    return Graph<T, Size>{};
 }
 
 int main()
 {
-    Graph g = PrimsMST(generateGraph<int, Nodes, Edges>());
+    Graph g = PrimsMST(generateGraph<int, Nodes>());
 }

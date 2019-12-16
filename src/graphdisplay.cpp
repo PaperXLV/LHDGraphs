@@ -6,11 +6,10 @@
 #include <vector>
 
 constexpr int Size{16};
-constexpr int MaxEdges{20};
 
 void dispGraph()
 {
-    Graph<int, Size, MaxEdges> g;
+    Graph<int, Size> g;
 
     g.addVertex("Boulder");
     g.addVertex("Denver");
@@ -52,14 +51,14 @@ void dispGraph()
     g.addEdge("ColoradoSprings", "LasVegas", 70);
     g.addEdge("Denver", "Boulder", 5);
 
-    makeGraph<int, Size, MaxEdges>(g);
+    makeGraph<int, Size>(g);
     return;
 }
 
-template <typename T, size_t Size, size_t MaxEdges>
-Graph<T, Size, MaxEdges> generateGraph()
+template <typename T, size_t Size>
+Graph<T, Size> generateGraph()
 {
-    Graph<T, Size, MaxEdges> g{};
+    Graph<T, Size> g{};
 
     g.addVertex("Boulder");
     g.addVertex("Denver");
@@ -82,7 +81,7 @@ Graph<T, Size, MaxEdges> generateGraph()
 int main(int, char *[])
 {
     //dispGraph();
-    Graph<int, 6, 3> g = generateGraph<int, 6, 3>();
-    makeGraph<int, 6, 3>(g);
+    Graph<int, 6> g = generateGraph<int, 6>();
+    makeGraph<int, 6>(g);
     return 0;
 }

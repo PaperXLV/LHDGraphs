@@ -8,12 +8,12 @@
 #include <string_view>
 #include <memory>
 
-template <typename T, size_t MaxEdges>
+template <typename T>
 struct vertex;
 
 /*This is the struct for the adjacent vertices for each
 vertex in the graph. */
-template <typename T, size_t MaxEdges>
+template <typename T>
 struct Edge
 {
     Edge() = default;
@@ -23,12 +23,12 @@ struct Edge
     Edge &operator=(Edge &&) = default;
     ~Edge() = default;
 
-    std::weak_ptr<vertex<T, MaxEdges>> v{};
+    std::weak_ptr<vertex<T>> v{};
     T weight{0};
 };
 
 /*this is the struct for each vertex in the graph. */
-template <typename T, size_t MaxEdges>
+template <typename T>
 struct vertex
 {
     vertex() = default;
@@ -40,14 +40,13 @@ struct vertex
 
     std::string name{""};
     bool visited{false};
-    int currentEdges{0};
-    std::array<Edge<T, MaxEdges>, MaxEdges> Edges{}; //stores edges to adjacent vertices
+    std::vector<Edge<T>> Edges{}; //stores edges to adjacent vertices
 };
 
 /* 
     Main Graph instance
 */
-template <typename T, size_t Size, size_t MaxEdges>
+template <typename T, size_t Size>
 class Graph
 {
 public:
@@ -63,15 +62,15 @@ public:
     bool inEdges(std::string_view source, std::string_view target);
 
     void displayEdges();
-    const std::array<std::shared_ptr<vertex<T, MaxEdges>>, Size> &getVertices() const;
-    const std::weak_ptr<vertex<T, MaxEdges>> findVertex(std::string_view name) const;
+    const std::array<std::shared_ptr<vertex<T>>, Size> &getVertices() const;
+    const std::weak_ptr<vertex<T>> findVertex(std::string_view name) const;
     int getCurrentVertices() const;
     void setAllVerticesUnvisited();
     void adjListToMat(bool matrix[Size][Size]);
     void adjListToMat();
 
 private:
-    std::array<std::shared_ptr<vertex<T, MaxEdges>>, Size> vertices{}; //stores vertices
+    std::array<std::shared_ptr<vertex<T>>, Size> vertices{}; //stores vertices
     int currentVertices{0};
 
     std::array<std::array<bool, Size>, Size> adjMatrix{};
@@ -81,12 +80,12 @@ private:
     Add a vertex to the graph
         - Takes in the name (string) of the city to be added
 */
-template <typename T, size_t Size, size_t MaxEdges>
-void Graph<T, Size, MaxEdges>::addVertex(std::string cityName)
+template <typename T, size_t Size>
+void Graph<T, Size>::addVertex(std::string cityName)
 {
-    vertex<T, MaxEdges> v1;
+    vertex<T> v1;
     v1.name = cityName;
-    vertices[currentVertices++] = std::make_shared<vertex<T, MaxEdges>>(v1);
+    vertices[currentVertices++] = std::make_shared<vertex<T>>(v1);
 }
 
 /*
@@ -95,8 +94,8 @@ void Graph<T, Size, MaxEdges>::addVertex(std::string cityName)
         - will only add in a single direction
         - weight is the weight of the Edge between the verticies
 */
-template <typename T, size_t Size, size_t MaxEdges>
-void Graph<T, Size, MaxEdges>::addEdge(std::string_view city1, std::string_view city2, T weight)
+template <typename T, size_t Size>
+void Graph<T, Size>::addEdge(std::string_view city1, std::string_view city2, T weight)
 {
     for (int i = 0; i < currentVertices; ++i)
     {
@@ -106,11 +105,10 @@ void Graph<T, Size, MaxEdges>::addEdge(std::string_view city1, std::string_view 
             {
                 if (vertices[j]->name == city2 && j != i)
                 {
-                    Edge<T, MaxEdges> e0;
+                    Edge<T> e0;
                     e0.v = vertices[j];
                     e0.weight = weight;
-                    vertices[i]->Edges[vertices[i]->currentEdges] = e0;
-                    vertices[i]->currentEdges++;
+                    vertices[i]->Edges.emplace_back(std::move(e0));
                 }
             }
         }
@@ -122,10 +120,10 @@ void Graph<T, Size, MaxEdges>::addEdge(std::string_view city1, std::string_view 
         - returns vertex pointer if found
         - returns nullptr if not found
 */
-template <typename T, size_t Size, size_t MaxEdges>
-const std::weak_ptr<vertex<T, MaxEdges>> Graph<T, Size, MaxEdges>::findVertex(std::string_view name) const
+template <typename T, size_t Size>
+const std::weak_ptr<vertex<T>> Graph<T, Size>::findVertex(std::string_view name) const
 {
-    std::shared_ptr<vertex<T, MaxEdges>> found{};
+    std::shared_ptr<vertex<T>> found{};
     for (int i = 0; i < currentVertices; ++i)
     {
         if (vertices[i]->name == name)
@@ -141,15 +139,15 @@ const std::weak_ptr<vertex<T, MaxEdges>> Graph<T, Size, MaxEdges>::findVertex(st
 /*
     Display edges in no particular order
 */
-template <typename T, size_t Size, size_t MaxEdges>
-void Graph<T, Size, MaxEdges>::displayEdges()
+template <typename T, size_t Size>
+void Graph<T, Size>::displayEdges()
 {
     for (int i = 0; i < currentVertices; ++i)
     {
         std::cout << vertices[i]->name << "-->";
-        for (int j = 0; j < vertices[i]->currentEdges; ++j)
+        for (int j = 0; j < vertices[i]->Edges.size(); ++j)
         {
-            if (j < vertices[i]->currentEdges - 1)
+            if (j < vertices[i]->Edges.size() - 1)
             {
                 std::cout << vertices[i]->Edges[j].v->name << " (" << vertices[i]->Edges[j].weight << " miles)***";
             }
@@ -166,11 +164,11 @@ void Graph<T, Size, MaxEdges>::displayEdges()
     Check if targetCity is in city's adjacency list
         - returns True if yes, False if no
 */
-template <typename T, size_t Size, size_t MaxEdges>
-bool Graph<T, Size, MaxEdges>::inEdges(std::string_view city, std::string_view targetCity)
+template <typename T, size_t Size>
+bool Graph<T, Size>::inEdges(std::string_view city, std::string_view targetCity)
 {
-    std::shared_ptr<vertex<T, MaxEdges>> v1 = findVertex(city).lock();
-    std::shared_ptr<vertex<T, MaxEdges>> v2 = findVertex(targetCity).lock();
+    std::shared_ptr<vertex<T>> v1 = findVertex(city).lock();
+    std::shared_ptr<vertex<T>> v2 = findVertex(targetCity).lock();
 
     for (const auto edge : v1->Edges)
     {
@@ -183,14 +181,14 @@ bool Graph<T, Size, MaxEdges>::inEdges(std::string_view city, std::string_view t
     return false;
 }
 
-template <typename T, size_t Size, size_t MaxEdges>
-const std::array<std::shared_ptr<vertex<T, MaxEdges>>, Size> &Graph<T, Size, MaxEdges>::getVertices() const
+template <typename T, size_t Size>
+const std::array<std::shared_ptr<vertex<T>>, Size> &Graph<T, Size>::getVertices() const
 {
     return vertices;
 }
 
-template <typename T, size_t Size, size_t MaxEdges>
-int Graph<T, Size, MaxEdges>::getCurrentVertices() const
+template <typename T, size_t Size>
+int Graph<T, Size>::getCurrentVertices() const
 {
     return currentVertices;
 }
@@ -198,8 +196,8 @@ int Graph<T, Size, MaxEdges>::getCurrentVertices() const
 /*
     Walk through vertices and mark them all unvisited
 */
-template <typename T, size_t Size, size_t MaxEdges>
-void Graph<T, Size, MaxEdges>::setAllVerticesUnvisited()
+template <typename T, size_t Size>
+void Graph<T, Size>::setAllVerticesUnvisited()
 {
     for (int i = 0; i < currentVertices; ++i)
     {
@@ -208,8 +206,8 @@ void Graph<T, Size, MaxEdges>::setAllVerticesUnvisited()
 }
 
 // User gives a destination matrix to store in
-template <typename T, size_t Size, size_t MaxEdges>
-void Graph<T, Size, MaxEdges>::adjListToMat(bool matrix[Size][Size])
+template <typename T, size_t Size>
+void Graph<T, Size>::adjListToMat(bool matrix[Size][Size])
 {
     using namespace std;
     for (int i = 0; i < Size; ++i)
@@ -240,8 +238,8 @@ void Graph<T, Size, MaxEdges>::adjListToMat(bool matrix[Size][Size])
 }
 
 // default to storing matrix in class adjMatrix
-template <typename T, size_t Size, size_t MaxEdges>
-void Graph<T, Size, MaxEdges>::adjListToMat()
+template <typename T, size_t Size>
+void Graph<T, Size>::adjListToMat()
 {
     using namespace std;
     for (int i = 0; i < Size; ++i)
@@ -271,14 +269,14 @@ void Graph<T, Size, MaxEdges>::adjListToMat()
     }
 }
 
-template <typename T, size_t MaxEdges>
-constexpr bool operator==(vertex<T, MaxEdges> &ob1, vertex<T, MaxEdges> &ob2)
+template <typename T>
+constexpr bool operator==(vertex<T> &ob1, vertex<T> &ob2)
 {
     return ob1.name == ob2.name;
 }
 
-template <typename T, size_t MaxEdges>
-constexpr bool operator==(const vertex<T, MaxEdges> &ob1, const vertex<T, MaxEdges> &ob2)
+template <typename T>
+constexpr bool operator==(const vertex<T> &ob1, const vertex<T> &ob2)
 {
     return ob1.name == ob2.name;
 }

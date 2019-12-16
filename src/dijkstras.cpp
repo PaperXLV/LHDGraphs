@@ -7,7 +7,7 @@ using namespace std;
 int main()
 {
 
-    Graph<int, 6, 5> g;
+    Graph<int, 6> g;
 
     g.addVertex("Boulder");
     g.addVertex("Denver");

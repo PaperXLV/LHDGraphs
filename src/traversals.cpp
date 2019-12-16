@@ -5,10 +5,10 @@
 
 using namespace std;
 
-template <typename T, size_t Size, size_t MaxEdges>
-Graph<T, Size, MaxEdges> generateGraph()
+template <typename T, size_t Size>
+Graph<T, Size> generateGraph()
 {
-	Graph<T, Size, MaxEdges> g{};
+	Graph<T, Size> g{};
 
 	g.addVertex("Boulder");
 	g.addVertex("Denver");
@@ -30,7 +30,7 @@ Graph<T, Size, MaxEdges> generateGraph()
 
 int main()
 {
-	Graph g = generateGraph<int, 6, 3>();
+	Graph g = generateGraph<int, 6>();
 	cout << "DEPTH-FIRST-TRAVERSAL: \n";
 	printDFT(g);
 	cout << "BREADTH-FIRST-TRAVERSAL: \n";

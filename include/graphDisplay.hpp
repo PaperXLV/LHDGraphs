@@ -19,8 +19,8 @@
 
 //makeGraph makes a dot file from a graph object and opens it.
 //Takes a graph object as an argument.
-template <typename T, size_t Size, size_t MaxEdges>
-void makeGraph(Graph<T, Size, MaxEdges> g)
+template <typename T, size_t Size>
+void makeGraph(Graph<T, Size> g)
 {
     //array of vector names
     //const char *names[Size];
@@ -34,7 +34,7 @@ void makeGraph(Graph<T, Size, MaxEdges> g)
         std::string convert = std::string(vertices[i]->name.data(), vertices[i]->name.size());
         names[i] = convert;
 
-        maxEdges += vertices[i]->currentEdges;
+        maxEdges += vertices[i]->Edges.size();
     }
     typedef std::pair<int, int> vertexEdge;
     // array of edges to be made in dot file
@@ -43,7 +43,7 @@ void makeGraph(Graph<T, Size, MaxEdges> g)
     int usedByLocation = 0;
     for (int i = 0; i < Size; i++)
     {
-        for (int j = 0; j < vertices[i]->currentEdges; j++)
+        for (int j = 0; j < vertices[i]->Edges.size(); j++)
         {
             //get the edge arrays for vector
             Edge newEdge = vertices[i]->Edges[j];

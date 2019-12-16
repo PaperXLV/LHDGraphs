@@ -4,12 +4,12 @@
 #include <queue>
 
 // Struct to hold necesary data for each vertex in the graph
-template <typename T, size_t MaxEdges>
+template <typename T>
 struct PrimData
 {
-    PrimData(std::weak_ptr<vertex<T, MaxEdges>> p, T w, bool i) : parent{p},
-                                                                  weight{w},
-                                                                  included{i}
+    PrimData(std::weak_ptr<vertex<T>> p, T w, bool i) : parent{p},
+                                                        weight{w},
+                                                        included{i}
     {
     }
 
@@ -20,19 +20,19 @@ struct PrimData
     PrimData &operator=(PrimData &&) = default;
     ~PrimData() = default;
 
-    std::weak_ptr<vertex<T, MaxEdges>> parent{};
+    std::weak_ptr<vertex<T>> parent{};
     T weight{std::numeric_limits<T>::max()};
     bool included{false};
 };
 
-template <typename T, size_t Size, size_t MaxEdges>
-Graph<T, Size, MaxEdges> PrimsMST(const Graph<T, Size, MaxEdges> &g)
+template <typename T, size_t Size>
+Graph<T, Size> PrimsMST(const Graph<T, Size> &g)
 {
-    Graph<T, Size, MaxEdges> ret{};
+    Graph<T, Size> ret{};
     const int vertexCount = g.getCurrentVertices();
 
     // Helper function to retrieve the index of a vertex v in the array a
-    auto getVertexIndex = [&](const std::shared_ptr<vertex<T, MaxEdges>> &v, const std::array<std::shared_ptr<vertex<T, MaxEdges>>, Size> &a) -> int {
+    auto getVertexIndex = [&](const std::shared_ptr<vertex<T>> &v, const std::array<std::shared_ptr<vertex<T>>, Size> &a) -> int {
         for (int i = 0; i < vertexCount; ++i)
         {
             if (a.at(i) == v)
@@ -44,10 +44,10 @@ Graph<T, Size, MaxEdges> PrimsMST(const Graph<T, Size, MaxEdges> &g)
     };
 
     // Helper function to add vertex v to MST and update weight and parents of all adjacent vertices
-    auto addVertexToMST = [&](const std::shared_ptr<vertex<T, MaxEdges>> &v,
-                              const std::array<std::shared_ptr<vertex<T, MaxEdges>>, Size> &vertices,
-                              std::array<PrimData<T, MaxEdges>, Size> &primData) -> void {
-        for (int i = 0; i < v->currentEdges; ++i)
+    auto addVertexToMST = [&](const std::shared_ptr<vertex<T>> &v,
+                              const std::array<std::shared_ptr<vertex<T>>, Size> &vertices,
+                              std::array<PrimData<T>, Size> &primData) -> void {
+        for (int i = 0; i < v->Edges.size(); ++i)
         {
             if (int index = getVertexIndex(v->Edges[i].v.lock(), vertices); index >= 0)
             {
@@ -67,9 +67,9 @@ Graph<T, Size, MaxEdges> PrimsMST(const Graph<T, Size, MaxEdges> &g)
     }
 
     // Initialize Data
-    std::array<std::shared_ptr<vertex<T, MaxEdges>>, Size>
+    std::array<std::shared_ptr<vertex<T>>, Size>
         vertices{g.getVertices()};
-    std::array<PrimData<T, MaxEdges>, Size> primData{};
+    std::array<PrimData<T>, Size> primData{};
 
     // Add first vertex to MST
     primData[0].weight = 0;

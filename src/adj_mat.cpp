@@ -3,14 +3,13 @@
 #include "graph.hpp"
 
 #define MAX_VERT 16
-#define MAX_EDGES 20
 
 using namespace std;
 
 int main()
 {
 
-    Graph<int, MAX_VERT, MAX_EDGES> g;
+    Graph<int, MAX_VERT> g;
 
     g.addVertex("Boulder");
     g.addVertex("Denver");
