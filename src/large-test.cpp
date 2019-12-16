@@ -32,7 +32,7 @@ int main()
             graphData.push_back(line);
         }
 
-        Graph<float, 30> g;
+        Graph<float> g;
 
         for (const auto &line : graphData)
         {

@@ -2,14 +2,12 @@
 #include <vector>
 #include "graph.hpp"
 
-#define MAX_VERT 16
-
 using namespace std;
 
 int main()
 {
 
-    Graph<int, MAX_VERT> g;
+    Graph<int> g;
 
     g.addVertex("Boulder");
     g.addVertex("Denver");
@@ -51,7 +49,8 @@ int main()
     g.addEdge("ColoradoSprings", "LasVegas", 70);
     g.addEdge("Denver", "Boulder", 5);
 
-    g.adjListToMat();
+    //g.adjListToMat();
+    cout << "NO ADJ LIST TO MAT CURRENTLY\n";
 
     return 0;
 }

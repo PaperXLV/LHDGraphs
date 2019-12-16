@@ -1,10 +1,10 @@
 #include "prims.hpp"
 #include "graphDisplay.hpp"
 
-template <typename T, size_t Size>
-Graph<T, Size> generateGraph()
+template <typename T>
+Graph<T> generateGraph()
 {
-    Graph<T, Size> g{};
+    Graph<T> g{};
 
     g.addVertex("Boulder");
     g.addVertex("Denver");
@@ -32,8 +32,8 @@ Graph<T, Size> generateGraph()
     return g;
 }
 
-template <typename T, size_t Size>
-Graph<T, Size> constructLargeGraph(std::string filepath = "")
+template <typename T>
+Graph<T> constructLargeGraph(std::string filepath = "")
 {
     //filepath = (filepath == "") ? filepath : "../data-filtered.txt";
     std::ifstream fin{"../data-filtered.txt"};
@@ -42,7 +42,7 @@ Graph<T, Size> constructLargeGraph(std::string filepath = "")
     std::vector<std::vector<std::string>> graphData;
     std::vector<std::string> line;
     std::string temp, row, word;
-    Graph<T, Size> g;
+    Graph<T> g;
 
     if (fin.is_open())
     {
@@ -96,7 +96,7 @@ Graph<T, Size> constructLargeGraph(std::string filepath = "")
 int main()
 {
     //Graph<int, 6, 3> g2 = PrimsMST(generateGraph<int, 6, 3>());
-    Graph<float, 30> g = PrimsMST(constructLargeGraph<float, 30>());
+    Graph<float> g = PrimsMST(constructLargeGraph<float>());
     makeGraph(g);
     return 0;
 }

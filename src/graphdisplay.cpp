@@ -9,7 +9,7 @@ constexpr int Size{16};
 
 void dispGraph()
 {
-    Graph<int, Size> g;
+    Graph<int> g;
 
     g.addVertex("Boulder");
     g.addVertex("Denver");
@@ -51,14 +51,14 @@ void dispGraph()
     g.addEdge("ColoradoSprings", "LasVegas", 70);
     g.addEdge("Denver", "Boulder", 5);
 
-    makeGraph<int, Size>(g);
+    makeGraph<int>(g);
     return;
 }
 
-template <typename T, size_t Size>
-Graph<T, Size> generateGraph()
+template <typename T>
+Graph<T> generateGraph()
 {
-    Graph<T, Size> g{};
+    Graph<T> g{};
 
     g.addVertex("Boulder");
     g.addVertex("Denver");
@@ -81,7 +81,7 @@ Graph<T, Size> generateGraph()
 int main(int, char *[])
 {
     //dispGraph();
-    Graph<int, 6> g = generateGraph<int, 6>();
-    makeGraph<int, 6>(g);
+    Graph<int> g = generateGraph<int>();
+    makeGraph(g);
     return 0;
 }

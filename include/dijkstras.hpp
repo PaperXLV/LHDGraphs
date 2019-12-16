@@ -24,13 +24,13 @@ struct DijkData
         - returns pointer to ending vertex
           with appropriate distance set
 */
-template <typename T, size_t Size>
-std::array<std::shared_ptr<DijkData<T>>, Size> dijkstraSearch(const Graph<T, Size> &g, std::string start)
+template <typename T>
+std::vector<std::shared_ptr<DijkData<T>>> dijkstraSearch(const Graph<T> &g, std::string start)
 {
     using namespace std;
     DijkData<T> dStart{};
     shared_ptr<vertex<T>> vStart = g.findVertex(start).lock();
-    array<shared_ptr<DijkData<T>>, Size> solvedList{};
+    vector<shared_ptr<DijkData<T>>> solvedList{};
 
     if (!vStart)
     {
@@ -48,13 +48,12 @@ std::array<std::shared_ptr<DijkData<T>>, Size> dijkstraSearch(const Graph<T, Siz
         ptr = make_shared<DijkData<T>>(DijkData<T>{});
     }
 
-    int currentIndex = 0;
-    solvedList[currentIndex++] = make_shared<DijkData<T>>(dStart);
+    solvedList.emplace_back(make_shared<DijkData<T>>(dStart));
 
     auto checkSolved = [&](const shared_ptr<vertex<T>> &v) -> bool {
-        for (int i = 0; i < currentIndex; ++i)
+        for (int i = 0; i < solvedList.size(); ++i)
         {
-            if (v == solvedList[i]->self && solvedList[i]->solved)
+            if (v->name == solvedList[i]->self->name && solvedList[i]->solved)
             {
                 return true;
             }
@@ -62,16 +61,14 @@ std::array<std::shared_ptr<DijkData<T>>, Size> dijkstraSearch(const Graph<T, Siz
         return false;
     };
 
-    cout << "initialized\n";
-
-    for (int x = 1; x < Size; x++)
+    for (int x = 1; x < g.getCurrentVertices(); x++)
     {
         int minDist = INT8_MAX;
         // data to keep track of solved node
-        shared_ptr<DijkData<T>> solvedD = solvedList[currentIndex];
+        shared_ptr<DijkData<T>> solvedD = make_shared<DijkData<T>>(DijkData<T>{});
 
         // iterater across list of solved vertices
-        for (int i = 0; i < currentIndex; i++)
+        for (int i = 0; i < solvedList.size(); i++)
         {
             shared_ptr<DijkData<T>> data = solvedList[i];
             // now iterate s's adjacency list
@@ -91,22 +88,19 @@ std::array<std::shared_ptr<DijkData<T>>, Size> dijkstraSearch(const Graph<T, Siz
                             solvedD->self = v;
                             minDist = dist;
                             //if you had parent ptr, update it here
-                            solvedD->parent = solvedList[i];
+                            solvedD->parent = data;
                         }
                     }
                 }
             }
         }
 
-        solvedD->distance = minDist;
-        solvedD->solved = true;
-        solvedList[currentIndex++] = solvedD;
-
-        for (int i = 0; i < currentIndex; i++)
+        if (minDist < INT8_MAX)
         {
-            cout << solvedList[i]->self->name << ":" << solvedList[i]->distance << ":" << solvedList[i]->parent->self->name << "\n";
+            solvedD->distance = minDist;
+            solvedD->solved = true;
+            solvedList.emplace_back(std::move(solvedD));
         }
-        cout << currentIndex << "\n";
     }
     return solvedList;
 }
@@ -116,12 +110,12 @@ std::array<std::shared_ptr<DijkData<T>>, Size> dijkstraSearch(const Graph<T, Siz
         - start is starting city name (string)
         - prints min distance path
 */
-template <typename T, size_t Size>
-void dijkstraDisplay(const Graph<T, Size> &g, std::string start)
+template <typename T>
+void dijkstraDisplay(const Graph<T> &g, std::string start)
 {
     using namespace std;
-    array<shared_ptr<DijkData<T>>, Size> dijk = dijkstraSearch(g, start);
-    for (int i = 0; i < Size; ++i)
+    vector<shared_ptr<DijkData<T>>> dijk = dijkstraSearch(g, start);
+    for (int i = 0; i < dijk.size(); ++i)
     {
         cout << dijk[i]->self->name << ":" << dijk[i]->distance << "\n";
     }

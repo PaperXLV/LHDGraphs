@@ -7,7 +7,7 @@ using namespace std;
 int main()
 {
 
-    Graph<int, 6> g;
+    Graph<int> g;
 
     g.addVertex("Boulder");
     g.addVertex("Denver");
@@ -20,6 +20,7 @@ int main()
     g.addEdge("Denver", "Cheyenne", 5);
     g.addEdge("Cheyenne", "Moab", 2);
     g.addEdge("Moab", "Las Vegas", 9);
+    g.addEdge("Boulder", "Fruita", 10);
 
     // long edge, shouldn't take this path
     g.addEdge("Boulder", "Las Vegas", 100);

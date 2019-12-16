@@ -13,26 +13,27 @@
 //const char* name[] = {  "new1", "new2" };
 
 //max number of vectors
-//constexpr int Size{6};
+//constexpr int vertices.size(){6};
 //max number of edges per vector
 //constexpr int MaxEdges{3};
 
 //makeGraph makes a dot file from a graph object and opens it.
 //Takes a graph object as an argument.
-template <typename T, size_t Size>
-void makeGraph(Graph<T, Size> g)
+template <typename T>
+void makeGraph(Graph<T> g)
 {
     //array of vector names
-    //const char *names[Size];
-    std::array<std::string, Size> names;
+    //const char *names[vertices.size()];
+    std::vector<std::string> names{};
     auto vertices = g.getVertices();
+    names.reserve(vertices.size());
     // maxEdges is the total edges from all vectors
     int maxEdges = 0;
     // get vector names and number of total edges
-    for (int i = 0; i < Size; i++)
+    for (int i = 0; i < vertices.size(); i++)
     {
         std::string convert = std::string(vertices[i]->name.data(), vertices[i]->name.size());
-        names[i] = convert;
+        names.emplace_back(std::move(convert));
 
         maxEdges += vertices[i]->Edges.size();
     }
@@ -41,21 +42,21 @@ void makeGraph(Graph<T, Size> g)
     vertexEdge usedBy[maxEdges];
     //location in the used_by array while adding values
     int usedByLocation = 0;
-    for (int i = 0; i < Size; i++)
+    for (int i = 0; i < vertices.size(); i++)
     {
         for (int j = 0; j < vertices[i]->Edges.size(); j++)
         {
             //get the edge arrays for vector
             Edge newEdge = vertices[i]->Edges[j];
             int edgeNumber = -1;
-            for (int t = 0; t < Size; t++)
+            for (int t = 0; t < vertices.size(); t++)
             {
                 if (!newEdge.v.expired())
                 {
                     if (names[t] == newEdge.v.lock()->name)
                     { //find vertex number for name
                         edgeNumber = t;
-                        t = Size;
+                        t = vertices.size();
                     }
                 }
             }
@@ -75,7 +76,7 @@ void makeGraph(Graph<T, Size> g)
                                   boost::property<boost::edge_weight_t, int>>
         BoostGraph;
     //make BoostGraph object
-    BoostGraph gr(usedBy, usedBy + nedges, weights, Size);
+    BoostGraph gr(usedBy, usedBy + nedges, weights, vertices.size());
 
     std::ofstream myfile;
     //write graph to gv file

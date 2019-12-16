@@ -25,14 +25,14 @@ struct PrimData
     bool included{false};
 };
 
-template <typename T, size_t Size>
-Graph<T, Size> PrimsMST(const Graph<T, Size> &g)
+template <typename T>
+Graph<T> PrimsMST(const Graph<T> &g)
 {
-    Graph<T, Size> ret{};
+    Graph<T> ret{};
     const int vertexCount = g.getCurrentVertices();
 
-    // Helper function to retrieve the index of a vertex v in the array a
-    auto getVertexIndex = [&](const std::shared_ptr<vertex<T>> &v, const std::array<std::shared_ptr<vertex<T>>, Size> &a) -> int {
+    // Helper function to retrieve the index of a vertex v in the vector a
+    auto getVertexIndex = [&](const std::shared_ptr<vertex<T>> &v, const std::vector<std::shared_ptr<vertex<T>>> &a) -> int {
         for (int i = 0; i < vertexCount; ++i)
         {
             if (a.at(i) == v)
@@ -45,8 +45,8 @@ Graph<T, Size> PrimsMST(const Graph<T, Size> &g)
 
     // Helper function to add vertex v to MST and update weight and parents of all adjacent vertices
     auto addVertexToMST = [&](const std::shared_ptr<vertex<T>> &v,
-                              const std::array<std::shared_ptr<vertex<T>>, Size> &vertices,
-                              std::array<PrimData<T>, Size> &primData) -> void {
+                              const std::vector<std::shared_ptr<vertex<T>>> &vertices,
+                              std::vector<PrimData<T>> &primData) -> void {
         for (int i = 0; i < v->Edges.size(); ++i)
         {
             if (int index = getVertexIndex(v->Edges[i].v.lock(), vertices); index >= 0)
@@ -63,13 +63,18 @@ Graph<T, Size> PrimsMST(const Graph<T, Size> &g)
     // Passing in empty graph returns empty graph
     if (vertexCount <= 0)
     {
+        printf("returning early\n%d", vertexCount);
         return ret;
     }
 
     // Initialize Data
-    std::array<std::shared_ptr<vertex<T>>, Size>
+    std::vector<std::shared_ptr<vertex<T>>>
         vertices{g.getVertices()};
-    std::array<PrimData<T>, Size> primData{};
+    std::vector<PrimData<T>> primData(g.getCurrentVertices());
+    for (int i = 0; i < g.getCurrentVertices(); ++i)
+    {
+        primData.emplace_back(PrimData<T>{});
+    }
 
     // Add first vertex to MST
     primData[0].weight = 0;

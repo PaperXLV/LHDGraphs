@@ -46,7 +46,7 @@ struct vertex
 /* 
     Main Graph instance
 */
-template <typename T, size_t Size>
+template <typename T>
 class Graph
 {
 public:
@@ -62,30 +62,29 @@ public:
     bool inEdges(std::string_view source, std::string_view target);
 
     void displayEdges();
-    const std::array<std::shared_ptr<vertex<T>>, Size> &getVertices() const;
+    const std::vector<std::shared_ptr<vertex<T>>> &getVertices() const;
     const std::weak_ptr<vertex<T>> findVertex(std::string_view name) const;
     int getCurrentVertices() const;
     void setAllVerticesUnvisited();
-    void adjListToMat(bool matrix[Size][Size]);
-    void adjListToMat();
+    //void adjListToMat(bool matrix[Size][Size]);
+    //void adjListToMat();
 
 private:
-    std::array<std::shared_ptr<vertex<T>>, Size> vertices{}; //stores vertices
-    int currentVertices{0};
+    std::vector<std::shared_ptr<vertex<T>>> vertices{}; //stores vertices
 
-    std::array<std::array<bool, Size>, Size> adjMatrix{};
+    //std::array<std::array<bool>> adjMatrix{};
 };
 
 /*
     Add a vertex to the graph
         - Takes in the name (string) of the city to be added
 */
-template <typename T, size_t Size>
-void Graph<T, Size>::addVertex(std::string cityName)
+template <typename T>
+void Graph<T>::addVertex(std::string cityName)
 {
     vertex<T> v1;
     v1.name = cityName;
-    vertices[currentVertices++] = std::make_shared<vertex<T>>(v1);
+    vertices.emplace_back(std::make_shared<vertex<T>>(v1));
 }
 
 /*
@@ -94,14 +93,14 @@ void Graph<T, Size>::addVertex(std::string cityName)
         - will only add in a single direction
         - weight is the weight of the Edge between the verticies
 */
-template <typename T, size_t Size>
-void Graph<T, Size>::addEdge(std::string_view city1, std::string_view city2, T weight)
+template <typename T>
+void Graph<T>::addEdge(std::string_view city1, std::string_view city2, T weight)
 {
-    for (int i = 0; i < currentVertices; ++i)
+    for (int i = 0; i < vertices.size(); ++i)
     {
         if (vertices[i]->name == city1)
         {
-            for (int j = 0; j < currentVertices; ++j)
+            for (int j = 0; j < vertices.size(); ++j)
             {
                 if (vertices[j]->name == city2 && j != i)
                 {
@@ -120,11 +119,11 @@ void Graph<T, Size>::addEdge(std::string_view city1, std::string_view city2, T w
         - returns vertex pointer if found
         - returns nullptr if not found
 */
-template <typename T, size_t Size>
-const std::weak_ptr<vertex<T>> Graph<T, Size>::findVertex(std::string_view name) const
+template <typename T>
+const std::weak_ptr<vertex<T>> Graph<T>::findVertex(std::string_view name) const
 {
     std::shared_ptr<vertex<T>> found{};
-    for (int i = 0; i < currentVertices; ++i)
+    for (int i = 0; i < vertices.size(); ++i)
     {
         if (vertices[i]->name == name)
         {
@@ -139,10 +138,10 @@ const std::weak_ptr<vertex<T>> Graph<T, Size>::findVertex(std::string_view name)
 /*
     Display edges in no particular order
 */
-template <typename T, size_t Size>
-void Graph<T, Size>::displayEdges()
+template <typename T>
+void Graph<T>::displayEdges()
 {
-    for (int i = 0; i < currentVertices; ++i)
+    for (int i = 0; i < vertices.size(); ++i)
     {
         std::cout << vertices[i]->name << "-->";
         for (int j = 0; j < vertices[i]->Edges.size(); ++j)
@@ -164,8 +163,8 @@ void Graph<T, Size>::displayEdges()
     Check if targetCity is in city's adjacency list
         - returns True if yes, False if no
 */
-template <typename T, size_t Size>
-bool Graph<T, Size>::inEdges(std::string_view city, std::string_view targetCity)
+template <typename T>
+bool Graph<T>::inEdges(std::string_view city, std::string_view targetCity)
 {
     std::shared_ptr<vertex<T>> v1 = findVertex(city).lock();
     std::shared_ptr<vertex<T>> v2 = findVertex(targetCity).lock();
@@ -181,33 +180,33 @@ bool Graph<T, Size>::inEdges(std::string_view city, std::string_view targetCity)
     return false;
 }
 
-template <typename T, size_t Size>
-const std::array<std::shared_ptr<vertex<T>>, Size> &Graph<T, Size>::getVertices() const
+template <typename T>
+const std::vector<std::shared_ptr<vertex<T>>> &Graph<T>::getVertices() const
 {
     return vertices;
 }
 
-template <typename T, size_t Size>
-int Graph<T, Size>::getCurrentVertices() const
+template <typename T>
+int Graph<T>::getCurrentVertices() const
 {
-    return currentVertices;
+    return vertices.size();
 }
 
 /*
     Walk through vertices and mark them all unvisited
 */
-template <typename T, size_t Size>
-void Graph<T, Size>::setAllVerticesUnvisited()
+template <typename T>
+void Graph<T>::setAllVerticesUnvisited()
 {
-    for (int i = 0; i < currentVertices; ++i)
+    for (int i = 0; i < vertices.size(); ++i)
     {
         vertices[i]->visited = false;
     }
 }
-
+/*
 // User gives a destination matrix to store in
-template <typename T, size_t Size>
-void Graph<T, Size>::adjListToMat(bool matrix[Size][Size])
+template <typename T>
+void Graph<T>::adjListToMat(bool matrix[Size][Size])
 {
     using namespace std;
     for (int i = 0; i < Size; ++i)
@@ -238,8 +237,8 @@ void Graph<T, Size>::adjListToMat(bool matrix[Size][Size])
 }
 
 // default to storing matrix in class adjMatrix
-template <typename T, size_t Size>
-void Graph<T, Size>::adjListToMat()
+template <typename T>
+void Graph<T>::adjListToMat()
 {
     using namespace std;
     for (int i = 0; i < Size; ++i)
@@ -268,7 +267,7 @@ void Graph<T, Size>::adjListToMat()
         cout << endl;
     }
 }
-
+*/
 template <typename T>
 constexpr bool operator==(vertex<T> &ob1, vertex<T> &ob2)
 {

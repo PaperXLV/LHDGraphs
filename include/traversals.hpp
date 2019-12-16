@@ -1,6 +1,6 @@
 #include "graph.hpp"
 
-template <typename T, size_t Size>
+template <typename T>
 void BFT_traversal(std::shared_ptr<vertex<T>> v)
 {
     std::cout << v->name << std::endl;
@@ -32,7 +32,7 @@ void BFT_traversal(std::shared_ptr<vertex<T>> v)
     }
 }
 
-template <typename T, size_t Size>
+template <typename T>
 void DFT_traversal(std::shared_ptr<vertex<T>> v)
 {
     std::cout << v->name << std::endl;
@@ -57,28 +57,28 @@ void DFT_recursive(std::shared_ptr<vertex<T>> v)
     }
 }
 
-template <typename T, size_t Size>
-void printDFT(Graph<T, Size> &graph)
+template <typename T>
+void printDFT(Graph<T> &graph)
 {
     graph.setAllVerticesUnvisited();
     for (int i = 0; i < graph.getCurrentVertices(); i++)
     {
         if (!graph.getVertices()[i]->visited)
         {
-            DFT_traversal<T, Size>(graph.getVertices()[i]);
+            DFT_traversal<T>(graph.getVertices()[i]);
         }
     }
 }
 
-template <typename T, size_t Size>
-void printBFT(Graph<T, Size> &graph)
+template <typename T>
+void printBFT(Graph<T> &graph)
 {
     graph.setAllVerticesUnvisited();
     for (int i = 0; i < graph.getCurrentVertices(); i++)
     {
         if (!graph.getVertices()[i]->visited)
         {
-            BFT_traversal<T, Size>(graph.getVertices()[i]);
+            BFT_traversal<T>(graph.getVertices()[i]);
         }
     }
 }
