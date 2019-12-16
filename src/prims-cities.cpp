@@ -64,6 +64,8 @@ Graph<T> constructLargeGraph(std::string filepath = "")
         {
             g.addVertex(line[0]);
         }
+        g.sortVertices();
+
         for (int j = 0; j < graphData.size(); j++)
         {
             const auto &line = graphData[j];

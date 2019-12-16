@@ -7,6 +7,7 @@
 #include <queue>
 #include <string_view>
 #include <memory>
+#include <algorithm>
 
 template <typename T>
 struct vertex;
@@ -59,18 +60,20 @@ public:
 
     void addVertex(std::string name);
     void addEdge(std::string_view name1, std::string_view name2, T weight);
-    bool inEdges(std::string_view source, std::string_view target);
+    bool inEdges(std::string_view source, std::string_view target) const;
 
     void displayEdges();
     const std::vector<std::shared_ptr<vertex<T>>> &getVertices() const;
     const std::weak_ptr<vertex<T>> findVertex(std::string_view name) const;
     int getCurrentVertices() const;
     void setAllVerticesUnvisited();
+    void sortVertices();
     //void adjListToMat(bool matrix[Size][Size]);
     //void adjListToMat();
 
 private:
     std::vector<std::shared_ptr<vertex<T>>> vertices{}; //stores vertices
+    bool vertSorted{false};
 
     //std::array<std::array<bool>> adjMatrix{};
 };
@@ -85,6 +88,7 @@ void Graph<T>::addVertex(std::string cityName)
     vertex<T> v1;
     v1.name = cityName;
     vertices.emplace_back(std::make_shared<vertex<T>>(v1));
+    vertSorted = false;
 }
 
 /*
@@ -96,19 +100,41 @@ void Graph<T>::addVertex(std::string cityName)
 template <typename T>
 void Graph<T>::addEdge(std::string_view city1, std::string_view city2, T weight)
 {
-    for (int i = 0; i < vertices.size(); ++i)
+    if (vertSorted)
     {
-        if (vertices[i]->name == city1)
+        auto c1 = std::lower_bound(vertices.begin(), vertices.end(), city1);
+        auto city1_access = *c1;
+        if (c1 != vertices.end() && city1_access->name == city1)
         {
-            for (int j = 0; j < vertices.size(); ++j)
+            auto c2 = std::lower_bound(vertices.begin(), vertices.end(), city2);
+            auto city2_access = *c2;
+            if (c2 != vertices.end() && city2_access->name == city2)
             {
-                if (vertices[j]->name == city2 && j != i)
+                Edge<T> e0;
+                e0.v = city2_access;
+                e0.weight = weight;
+                city1_access->Edges.emplace_back(std::move(e0));
+            }
+        }
+    }
+    else
+    {
+        for (int i = 0; i < vertices.size(); ++i)
+        {
+            if (vertices[i]->name == city1)
+            {
+                for (int j = 0; j < vertices.size(); ++j)
                 {
-                    Edge<T> e0;
-                    e0.v = vertices[j];
-                    e0.weight = weight;
-                    vertices[i]->Edges.emplace_back(std::move(e0));
+                    if (vertices[j]->name == city2 && j != i)
+                    {
+                        Edge<T> e0;
+                        e0.v = vertices[j];
+                        e0.weight = weight;
+                        vertices[i]->Edges.emplace_back(std::move(e0));
+                        break;
+                    }
                 }
+                break;
             }
         }
     }
@@ -164,7 +190,7 @@ void Graph<T>::displayEdges()
         - returns True if yes, False if no
 */
 template <typename T>
-bool Graph<T>::inEdges(std::string_view city, std::string_view targetCity)
+bool Graph<T>::inEdges(std::string_view city, std::string_view targetCity) const
 {
     std::shared_ptr<vertex<T>> v1 = findVertex(city).lock();
     std::shared_ptr<vertex<T>> v2 = findVertex(targetCity).lock();
@@ -202,6 +228,13 @@ void Graph<T>::setAllVerticesUnvisited()
     {
         vertices[i]->visited = false;
     }
+}
+
+template <typename T>
+void Graph<T>::sortVertices()
+{
+    std::sort(vertices.begin(), vertices.end());
+    vertSorted = true;
 }
 /*
 // User gives a destination matrix to store in
@@ -269,15 +302,51 @@ void Graph<T>::adjListToMat()
 }
 */
 template <typename T>
-constexpr bool operator==(vertex<T> &ob1, vertex<T> &ob2)
+constexpr bool operator==(const vertex<T> &ob1, const vertex<T> &ob2)
 {
     return ob1.name == ob2.name;
 }
 
 template <typename T>
-constexpr bool operator==(const vertex<T> &ob1, const vertex<T> &ob2)
+constexpr bool operator!=(const vertex<T> &ob1, const vertex<T> &ob2)
 {
-    return ob1.name == ob2.name;
+    return !(ob1.name == ob2.name);
+}
+
+template <typename T>
+constexpr bool operator>(const vertex<T> &ob1, const vertex<T> &ob2)
+{
+    return ob1.name > ob2.name;
+}
+
+template <typename T>
+constexpr bool operator<(const vertex<T> &ob1, const vertex<T> &ob2)
+{
+    return ob1.name < ob2.name;
+}
+
+template <typename T>
+constexpr bool operator==(const std::shared_ptr<vertex<T>> &ob1, const std::string_view &ob2)
+{
+    return ob1->name == ob2;
+}
+
+template <typename T>
+constexpr bool operator!=(const std::shared_ptr<vertex<T>> &ob1, const std::string_view &ob2)
+{
+    return !(ob1->name == ob2);
+}
+
+template <typename T>
+constexpr bool operator>(const std::shared_ptr<vertex<T>> &ob1, const std::string_view &ob2)
+{
+    return ob1->name > ob2;
+}
+
+template <typename T>
+constexpr bool operator<(const std::shared_ptr<vertex<T>> &ob1, const std::string_view &ob2)
+{
+    return ob1->name < ob2;
 }
 
 #endif // GRAPH_HPP

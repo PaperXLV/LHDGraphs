@@ -20,6 +20,8 @@ Graph<T> generateGraph()
             getline(f, temp);
             g.addVertex(temp.substr(0, temp.find(',')));
         }
+        g.sortVertices();
+
         while (getline(f, temp))
         {
             auto it = temp.find(',');
