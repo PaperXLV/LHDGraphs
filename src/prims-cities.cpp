@@ -52,8 +52,6 @@ Graph<T, Size, MaxEdges> constructLargeGraph(std::string filepath = "")
 
             std::stringstream s(temp);
 
-            std::cout << row;
-
             while (getline(s, word, ','))
             {
                 line.push_back(word);

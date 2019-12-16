@@ -86,8 +86,7 @@ void Graph<T, Size, MaxEdges>::addVertex(std::string cityName)
 {
     vertex<T, MaxEdges> v1;
     v1.name = cityName;
-    vertices[currentVertices] = std::make_shared<vertex<T, MaxEdges>>(v1);
-    currentVertices++;
+    vertices[currentVertices++] = std::make_shared<vertex<T, MaxEdges>>(v1);
 }
 
 /*
@@ -99,11 +98,11 @@ void Graph<T, Size, MaxEdges>::addVertex(std::string cityName)
 template <typename T, size_t Size, size_t MaxEdges>
 void Graph<T, Size, MaxEdges>::addEdge(std::string_view city1, std::string_view city2, T weight)
 {
-    for (int i = 0; i < vertices.size(); ++i)
+    for (int i = 0; i < currentVertices; ++i)
     {
         if (vertices[i]->name == city1)
         {
-            for (int j = 0; j < vertices.size(); ++j)
+            for (int j = 0; j < currentVertices; ++j)
             {
                 if (vertices[j]->name == city2 && j != i)
                 {
@@ -127,7 +126,7 @@ template <typename T, size_t Size, size_t MaxEdges>
 const std::weak_ptr<vertex<T, MaxEdges>> Graph<T, Size, MaxEdges>::findVertex(std::string_view name) const
 {
     std::shared_ptr<vertex<T, MaxEdges>> found{};
-    for (int i = 0; i < vertices.size(); ++i)
+    for (int i = 0; i < currentVertices; ++i)
     {
         if (vertices[i]->name == name)
         {
@@ -145,7 +144,7 @@ const std::weak_ptr<vertex<T, MaxEdges>> Graph<T, Size, MaxEdges>::findVertex(st
 template <typename T, size_t Size, size_t MaxEdges>
 void Graph<T, Size, MaxEdges>::displayEdges()
 {
-    for (int i = 0; i < vertices.size(); ++i)
+    for (int i = 0; i < currentVertices; ++i)
     {
         std::cout << vertices[i]->name << "-->";
         for (int j = 0; j < vertices[i]->currentEdges; ++j)
@@ -202,7 +201,7 @@ int Graph<T, Size, MaxEdges>::getCurrentVertices() const
 template <typename T, size_t Size, size_t MaxEdges>
 void Graph<T, Size, MaxEdges>::setAllVerticesUnvisited()
 {
-    for (int i = 0; i < vertices.size(); ++i)
+    for (int i = 0; i < currentVertices; ++i)
     {
         vertices[i]->visited = false;
     }
