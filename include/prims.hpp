@@ -50,10 +50,11 @@ bool operator!=(const PrimData<T> &lhs, const PrimData<T> &rhs)
     return !(lhs.weight == rhs.weight);
 }
 
+// Utilizes Prim's Algorithm to generate and return the MST of g
 template <typename T>
 Graph<T> PrimsMST(const Graph<T> &g)
 {
-    Graph<T> ret{};
+    Graph<T> mst{};
     const int vertexCount = g.getCurrentVertices();
 
     auto checkIncluded = [&](const std::shared_ptr<vertex<T>> &v, const std::vector<std::string> &included) -> bool {
@@ -64,8 +65,37 @@ Graph<T> PrimsMST(const Graph<T> &g)
         vec.insert(std::upper_bound(vec.begin(), vec.end(), add), add);
     };
 
-    auto addFromPriorityQueue = [&](std::priority_queue<PrimData<T>, std::vector<PrimData<T>>, std::greater<PrimData<T>>> &pq, std::vector<std::string> &included) -> void {
-        PrimData<T> top = pq.top();
+    const auto vertices = g.getVertices();
+
+    // Passing in empty graph returns empty graph
+    if (vertexCount <= 0)
+    {
+        printf("returning early\n%d", vertexCount);
+        return mst;
+    }
+
+    // Initialize Data
+    std::vector<std::string> included{};
+    std::vector<PrimData<T>> container;
+    included.reserve(vertexCount);
+    container.reserve(vertexCount);
+    std::priority_queue<PrimData<T>, std::vector<PrimData<T>>, std::greater<PrimData<T>>>
+        pq(std::greater<PrimData<T>>(), std::move(container));
+
+    // Add first vertex to the min heap
+    pq.push(PrimData<T>(vertices[0], std::shared_ptr<vertex<T>>{}, 0));
+
+    // Initialize return graph vertices
+    for (const auto &v : vertices)
+    {
+        mst.addVertex(v->name);
+    }
+    // Sort to enable fast edge adding
+    mst.sortVertices();
+
+    while (!pq.empty())
+    {
+        const PrimData<T> top = pq.top();
         pq.pop();
 
         if (!checkIncluded(top.self, included))
@@ -73,7 +103,7 @@ Graph<T> PrimsMST(const Graph<T> &g)
             insertSorted(included, top.self->name);
             if (!top.parent.expired())
             {
-                ret.addEdge(top.parent.lock()->name, top.self->name, top.weight);
+                mst.addEdge(top.parent.lock()->name, top.self->name, top.weight);
             }
             for (const auto &edge : top.self->Edges)
             {
@@ -87,38 +117,7 @@ Graph<T> PrimsMST(const Graph<T> &g)
                 }
             }
         }
-    };
-
-    auto vertices = g.getVertices();
-
-    // Passing in empty graph returns empty graph
-    if (vertexCount <= 0)
-    {
-        printf("returning early\n%d", vertexCount);
-        return ret;
     }
 
-    // Initialize Data
-    std::vector<std::string> included{};
-    std::vector<PrimData<T>> container;
-    included.reserve(vertexCount);
-    container.reserve(vertexCount);
-    std::priority_queue<PrimData<T>, std::vector<PrimData<T>>, std::greater<PrimData<T>>> pq(std::greater<PrimData<T>>(), std::move(container));
-
-    pq.push(PrimData<T>(vertices[0], std::shared_ptr<vertex<T>>{}, 0));
-
-    // Initialize return graph vertices
-    for (const auto &v : vertices)
-    {
-        ret.addVertex(v->name);
-    }
-
-    ret.sortVertices();
-
-    while (!pq.empty())
-    {
-        addFromPriorityQueue(pq, included);
-    }
-
-    return ret;
+    return mst;
 }

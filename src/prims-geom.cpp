@@ -1,5 +1,6 @@
 #include "prims.hpp"
 #include "graphDisplay.hpp"
+#include "traversals.hpp"
 #include <fstream>
 #include <string>
 #include <chrono>
@@ -53,7 +54,7 @@ int main()
     auto start = high_resolution_clock::now();
     Graph g = generateGraph<int>();
     auto graphGeneration = high_resolution_clock::now();
-    g = PrimsMST(g);
+    Graph g2 = PrimsMST(g);
     auto end = high_resolution_clock::now();
 
     auto generateTime = duration_cast<milliseconds>(graphGeneration - start);

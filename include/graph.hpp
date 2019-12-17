@@ -62,7 +62,7 @@ public:
     void addEdge(std::string_view name1, std::string_view name2, T weight);
     bool inEdges(std::string_view source, std::string_view target) const;
 
-    void displayEdges();
+    void displayEdges() const;
     const std::vector<std::shared_ptr<vertex<T>>> &getVertices() const;
     const std::weak_ptr<vertex<T>> findVertex(std::string_view name) const;
     int getCurrentVertices() const;
@@ -87,7 +87,7 @@ void Graph<T>::addVertex(std::string cityName)
 {
     vertex<T> v1;
     v1.name = cityName;
-    vertices.emplace_back(std::make_shared<vertex<T>>(v1));
+    vertices.emplace_back(std::make_shared<vertex<T>>(std::move(v1)));
     vertSorted = false;
 }
 
@@ -165,7 +165,7 @@ const std::weak_ptr<vertex<T>> Graph<T>::findVertex(std::string_view name) const
     Display edges in no particular order
 */
 template <typename T>
-void Graph<T>::displayEdges()
+void Graph<T>::displayEdges() const
 {
     for (int i = 0; i < vertices.size(); ++i)
     {
@@ -239,6 +239,7 @@ void Graph<T>::sortVertices()
         vertSorted = true;
     }
 }
+
 /*
 // User gives a destination matrix to store in
 template <typename T>
