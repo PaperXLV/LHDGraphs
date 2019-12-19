@@ -84,10 +84,7 @@ void makeGraph(Graph<T> g)
     boost::write_graphviz(myfile, gr, boost::make_label_writer(&names[0]));
     myfile.close();
     //open graph
-    if (system("xdot graph.gv"))
-    {
-        std::cout << "install xdot for viewing graph\n";
-    }
+    system("xdot graph.gv");
 }
 
 #endif // GRAPHDISPLAY_HPP

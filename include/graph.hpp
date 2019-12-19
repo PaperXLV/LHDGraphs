@@ -119,30 +119,23 @@ void Graph<T>::addEdge(std::string_view city1, std::string_view city2, T weight)
     }
     else
     {
-        int c1 = -1;
         for (int i = 0; i < vertices.size(); ++i)
         {
             if (vertices[i]->name == city1)
             {
-                c1 = i;
+                for (int j = 0; j < vertices.size(); ++j)
+                {
+                    if (vertices[j]->name == city2 && j != i)
+                    {
+                        Edge<T> e0;
+                        e0.v = vertices[j];
+                        e0.weight = weight;
+                        vertices[i]->Edges.emplace_back(std::move(e0));
+                        break;
+                    }
+                }
                 break;
             }
-        }
-        int c2 = -1;
-        for (int j = 0; j < vertices.size(); ++j)
-        {
-            if (vertices[j]->name == city2 && j != i)
-            {
-                c2 = j;
-                break;
-            }
-        }
-        if (c1 > 0 && c2 > 0 && c1 != c2)
-        {
-            Edge<T> e0;
-            e0.v = vertices[c2];
-            e0.weight = weight;
-            vertices[c1]->Edges.emplace_back(std::move(e0));
         }
     }
 }
