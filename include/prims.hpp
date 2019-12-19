@@ -61,7 +61,7 @@ Graph<T> PrimsMST(const Graph<T> &g)
         return std::binary_search(included.begin(), included.end(), v->name);
     };
 
-    auto insertSorted = [&](std::vector<std::string> &vec, std::string &add) -> void {
+    auto insertSorted = [&](std::vector<std::string> &vec, const std::string &add) -> void {
         vec.insert(std::upper_bound(vec.begin(), vec.end(), add), add);
     };
 
@@ -70,7 +70,7 @@ Graph<T> PrimsMST(const Graph<T> &g)
     // Passing in empty graph returns empty graph
     if (vertexCount <= 0)
     {
-        printf("returning early\n%d", vertexCount);
+        printf("Empty Graph\n");
         return mst;
     }
 
